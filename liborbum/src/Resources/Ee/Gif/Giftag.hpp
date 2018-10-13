@@ -188,6 +188,6 @@ public:
         return (this->*fn)();
     }
 
-private:
+    /// Stores the value of the tag.
     uqword tag;
 };

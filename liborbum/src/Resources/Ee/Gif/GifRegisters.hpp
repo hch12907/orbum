@@ -16,16 +16,8 @@ public:
 
     GifRegister_Ctrl();
 
-    /// Indicates whether the GIF is currently processing GS primitive 
-    /// data (otherwise read a tag). Reset upon finishing a GS primitive.
-    bool transfer_started;
-
     /// Current transfer tag being processed.
     Giftag tag;
-
-    /// Number of registers / loops processed for the current tag.
-    size_t transfer_register_count;
-    size_t transfer_loop_count;
 
     /// Special holding area for the RGBAQ.Q value, set when the ST 
     /// register descriptor is written to. See EE Users manual page 153/154.
@@ -100,6 +92,14 @@ public:
 };
 
 class GifRegister_Cnt : public SizedWordRegister
+{
+public:
+    static constexpr Bitfield LOOPCNT = Bitfield(0, 15);
+    static constexpr Bitfield REGCNT = Bitfield(16, 4);
+    static constexpr Bitfield VUADDR = Bitfield(20, 10);
+};
+
+class GifRegister_P3cnt : public SizedWordRegister
 {
 public:
     static constexpr Bitfield P3CNT = Bitfield(0, 15);

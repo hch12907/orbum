@@ -49,6 +49,9 @@ int CGif::time_step(const int ticks_available)
 {
     auto& r = core->get_resources();
     auto& ctrl = r.ee.gif.ctrl;
+    auto& mode = r.ee.gif.mode;
+    auto& stat = r.ee.gif.stat;
+
     auto& fifo_gif_path1 = r.fifo_gif_path1;
     auto& fifo_gif_path2 = r.fifo_gif_path2;
     auto& fifo_gif_path3 = r.fifo_gif_path3;
@@ -60,18 +63,21 @@ int CGif::time_step(const int ticks_available)
     // See EE Users Manual page 149. 
     DmaFifoQueue<>* paths[3] = {&fifo_gif_path1, &fifo_gif_path2, &fifo_gif_path3};
 
-    for (auto& fifo : paths)
+    for (int i = 0; i < 3; i++)
     {
+        auto& fifo = paths[i];
+
+        // When APATH is set to 0, the GIF is idling
         // A GIFtag is always read before processing data.
-        if (!ctrl.transfer_started)
+        if (!stat.extract_field(GifRegister_Stat::APATH))
         {
             if (!fifo->has_read_available(NUMBER_BYTES_IN_QWORD))
                 continue;
 
             uqword data;
             fifo->read(reinterpret_cast<ubyte*>(&data), NUMBER_BYTES_IN_QWORD);
-
-            ctrl.transfer_started = true;
+            
+            stat.insert_field(GifRegister_Stat::APATH, i + 1);
 
             cycles_consumed = handle_tag(Giftag(data));
         }
@@ -141,8 +147,12 @@ int CGif::handle_tag(const Giftag tag)
     auto& ctrl = r.ee.gif.ctrl;
 
     ctrl.tag = tag;
-    ctrl.transfer_register_count = 0;
-    ctrl.transfer_loop_count = 0;
+
+    // The tag is split into 4 parts and copied to the respective registers
+    r.ee.gif.tag0 = tag.tag.uw[0];
+    r.ee.gif.tag1 = tag.tag.uw[1];
+    r.ee.gif.tag2 = tag.tag.uw[2];
+    r.ee.gif.tag3 = tag.tag.uw[3];
 
     // Initialise the RGBAQ.Q value on every tag read.
     // See EE Users manual page 153.
@@ -176,13 +186,17 @@ int CGif::handle_data_packed(const uqword data)
 {
     auto& r = core->get_resources();
     auto& ctrl = r.ee.gif.ctrl;
+    auto& stat = r.ee.gif.stat;
+    auto& count = r.ee.gif.cnt;
 
-    // Get the register descirptor.
-    size_t register_descirptor = ctrl.tag.regs(ctrl.transfer_register_count);
+    // Get the register descriptor.
+    ubyte loop_count = count.extract_field(GifRegister_Cnt::LOOPCNT);
+    ubyte reg_count = (count.extract_field(GifRegister_Cnt::REGCNT) - 1) & 0xF;
+    size_t register_descriptor = ctrl.tag.regs(reg_count);
 
     // Process the data given, and write to the GS register.
     // See EE Users Manual page 152 onwards for processing details.
-    switch (register_descirptor)
+    switch (register_descriptor)
     {
     case 0x0:
     {
@@ -373,15 +387,21 @@ int CGif::handle_data_packed(const uqword data)
     }
     }
     
-    ctrl.transfer_register_count += 1;
-    if (ctrl.transfer_register_count == ctrl.tag.nreg())
+    // +1 for incrementing, another +1 when inserting for restoring the index
+    reg_count += 1;
+    count.insert_field(GifRegister_Cnt::REGCNT, reg_count + 1);
+
+    if (reg_count == ctrl.tag.nreg())
     {
-        ctrl.transfer_register_count = 0;
-        ctrl.transfer_loop_count += 1;
+        reg_count = 0;
+        count.insert_field(GifRegister_Cnt::REGCNT, 1);
+        count.insert_field(GifRegister_Cnt::LOOPCNT, --loop_count);
     }
 
-    if (ctrl.transfer_loop_count == ctrl.tag.nloop())
-        ctrl.transfer_started = false;
+    if (loop_count == 0)
+    {
+        stat.insert_field(GifRegister_Stat::APATH, 0);
+    }
 
     return 1;
 }
@@ -390,16 +410,20 @@ int CGif::handle_data_reglist(const uqword data)
 {
     auto& r = core->get_resources();
     auto& ctrl = r.ee.gif.ctrl;
+    auto& stat = r.ee.gif.stat;
+    auto& count = r.ee.gif.cnt;
 
-    udword datas[] = { data.lo, data.hi };
+    const udword datas[] = { data.lo, data.hi };
     for (auto& data : datas)
     {
-        // Get the register descirptor.
-        size_t register_descirptor = ctrl.tag.regs(ctrl.transfer_register_count);
+        // Get the register descriptor.
+        ubyte loop_count = count.extract_field(GifRegister_Cnt::LOOPCNT);
+        ubyte reg_count = (count.extract_field(GifRegister_Cnt::REGCNT) - 1) & 0xF;
+        size_t register_descriptor = ctrl.tag.regs(reg_count);
 
         // Write data directly to the GS register.
         // See EE Users Manual page 159 onwards for processing details.
-        switch (register_descirptor)
+        switch (register_descriptor)
         {
         case 0x0:
         {
@@ -514,16 +538,19 @@ int CGif::handle_data_reglist(const uqword data)
         }
         }
 
-        ctrl.transfer_register_count += 1;
-        if (ctrl.transfer_register_count == ctrl.tag.nreg())
+        // +1 for incrementing, another +1 when inserting for restoring the index
+        reg_count += 1;
+        count.insert_field(GifRegister_Cnt::REGCNT, reg_count + 1);
+
+        if (reg_count == ctrl.tag.nreg())
         {
-            ctrl.transfer_register_count = 0;
-            ctrl.transfer_loop_count += 1;
+            count.insert_field(GifRegister_Cnt::REGCNT, 1);
+            count.insert_field(GifRegister_Cnt::LOOPCNT, --loop_count);
         }
 
-        if (ctrl.transfer_loop_count == ctrl.tag.nloop())
+        if (loop_count == 0)
         {
-            ctrl.transfer_started = false;
+            stat.insert_field(GifRegister_Stat::APATH, 0);
             break;
         }
     }
@@ -537,6 +564,11 @@ int CGif::handle_data_image(const uqword data)
 {
     auto& r = core->get_resources();
     auto& ctrl = r.ee.gif.ctrl;
+    auto& stat = r.ee.gif.stat;
+    auto& count = r.ee.gif.cnt;
+
+    ubyte loop_count = count.extract_field(GifRegister_Cnt::LOOPCNT);
+
     //auto& hwreg = r.gs.hwreg;
 
     udword datas[] = { data.lo, data.hi };
@@ -547,9 +579,10 @@ int CGif::handle_data_image(const uqword data)
         //hwreg.write_udword(data);
     }
 
-    ctrl.transfer_loop_count += 1;
-    if (ctrl.transfer_loop_count == ctrl.tag.nloop())
-        ctrl.transfer_started = false;
+    count.insert_field(GifRegister_Cnt::LOOPCNT, --loop_count);
+
+    if (loop_count == 0)
+        stat.insert_field(GifRegister_Stat::APATH, 0);
 
     return 1;
 }
