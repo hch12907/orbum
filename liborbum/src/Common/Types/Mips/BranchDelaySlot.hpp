@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cereal/cereal.hpp>
+#include <utility>
 
 #include "Common/Types/Primitive.hpp"
 #include "Common/Types/Register/PcRegisters.hpp"
@@ -22,42 +23,68 @@ public:
     {
     }
 
+    void add_branch_queue(const uptr address)
+    {
+        for (auto& branch : pending_branches)
+        {
+            if (branch.first == 0)
+            {
+                branch.first = slots + 1;
+                branch.second = address;
+                
+                return;
+            }
+        }
+
+        throw std::runtime_error("BDS: More than 2 branches in queue - this should not happen");
+    }
+
     /// Sets a pending branch to the direct address given.
     void set_branch_direct(const uptr address)
     {
-        current_slot = slots + 1;
-        branch_pc = address;
+        add_branch_queue(address);
     }
 
     /// Sets a pending branch which combines the current PC address with
     /// the offset specified. Used for I-type instructions (imm's).
     void set_branch_itype(WordPcRegister& pc, const shword imm)
     {
-        current_slot = slots + 1;
-        branch_pc = (pc.read_uword() + Constants::MIPS::SIZE_MIPS_INSTRUCTION) + (imm << 2);
+        add_branch_queue((pc.read_uword() + Constants::MIPS::SIZE_MIPS_INSTRUCTION) + (imm << 2));
     }
 
     /// Sets a pending branch which combines the current PC address with
     /// the region address. Used for J-type instructions.
     void set_branch_jtype(WordPcRegister& pc, const uptr j_region_addr)
     {
-        current_slot = slots + 1;
-        branch_pc = ((pc.read_uword() + Constants::MIPS::SIZE_MIPS_INSTRUCTION) & 0xF0000000) | (j_region_addr << 2);
+        add_branch_queue(((pc.read_uword() + Constants::MIPS::SIZE_MIPS_INSTRUCTION) & 0xF0000000) | (j_region_addr << 2));
     }
 
     /// Advances the PC by either incrementing by 1 instruction,
     /// or taking a branch if all slots have been used.
     void advance_pc(WordPcRegister& pc)
     {
-        if (current_slot)
+        for (auto& branch : pending_branches)
         {
-            current_slot--;
-            if (!current_slot)
-            {
-                // Do branch now.
-                pc.write_uword(branch_pc);
-                return;
-            }
+            // Run for one cycle if >= 0
+            // (-1 is used for indicating empty branch, and 0 for "time to branch")
+            if (branch.first >= 0)
+                branch.first -= 1;
+        }
+
+        // Check if the cycles needed to branch reaches 0.
+        if (pending_branches[0].first == 0)
+        {
+            pc.write_uword(pending_branches[0].second);
+
+            // Move second branch up the queue
+            pending_branches[0].first = pending_branches[1].first;
+            pending_branches[0].second = pending_branches[1].second;
+
+            // Set second branch to empty
+            pending_branches[0].first = -1;
+            pending_branches[0].second = 0;
+
+            return;
         }
 
         // Increment by 1 instruction.
@@ -67,25 +94,32 @@ public:
     /// Stops the current branch in progress (used by exception handler).
     void stop_branch()
     {
-        current_slot = 0;
+        for (auto& branch : pending_branches)
+        {
+            branch.first = -1;
+        }
     }
 
     /// Returns if a branch is currently pending.
     bool is_branch_pending() const
     {
-        return current_slot > 0;
+        // Since pending_branches[1] will be moved to [0], just checking [0] would be enough
+        return pending_branches[0].first != -1;
     }
 
 protected:
-    size_t current_slot;
-    uptr branch_pc;
+    // sword of std::pair = cycles left before branching
+    // uptr of std::pair = address to branch to
+    std::array<std::pair<sword, uptr>, 2> pending_branches;
 
 public:
     template <class Archive>
     void serialize(Archive& archive)
     {
         archive(
-            CEREAL_NVP(current_slot),
-            CEREAL_NVP(branch_pc));
+            CEREAL_NVP(pending_branches[0].first),
+            CEREAL_NVP(pending_branches[0].second),
+            CEREAL_NVP(pending_branches[1].first),
+            CEREAL_NVP(pending_branches[1].second));
     }
 };
