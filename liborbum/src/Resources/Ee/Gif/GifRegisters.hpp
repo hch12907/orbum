@@ -28,11 +28,8 @@ public:
     void serialize(Archive & archive)
     {
         archive(
-            cereal::base_class<SizedWordRegister>(this),
-            CEREAL_NVP(transfer_started),
-            CEREAL_NVP(tag),
-            CEREAL_NVP(transfer_register_count),
-            CEREAL_NVP(transfer_loop_count),
+            cereal::base_class<SizedWordRegister>(this)
+            // CEREAL_NVP(tag) // TODO
         );
     }
 };

@@ -282,14 +282,14 @@ bool CVuInterpreter::check_data_hazard(VuUnit_Base* unit, const VuInstructionDec
         decoder.lower_src(1).value_or(-1)};
 
     // If the instruction is WAITP, return true if EFU is running
-    if ((decoder.get_lower_inst().value) & 0x7FF == 0x7BF)
+    if (((decoder.get_lower_inst().value) & 0x7FF) == 0x7BF)
     {
         if (unit->efu.is_running())
             return true;
     }
 
     // If the instruction is WAITQ, return true if FDIV is running
-    if ((decoder.get_lower_inst().value) & 0x7FF == 0x3BF)
+    if (((decoder.get_lower_inst().value) & 0x7FF) == 0x3BF)
     {
         if (unit->fdiv.is_running())
             return true;
@@ -309,7 +309,7 @@ bool CVuInterpreter::check_data_hazard(VuUnit_Base* unit, const VuInstructionDec
                 {
                     if (fmac.is_using_register(upper_read[0], inst.dest()))
                         return true;
-                    if (fmac.is_using_register(upper_read[1], 1 << (3 - inst.bc())))
+                    if (fmac.is_using_register(upper_read[1], 1U << (3 - inst.bc())))
                         return true;
                 }
             }
@@ -334,7 +334,7 @@ bool CVuInterpreter::check_data_hazard(VuUnit_Base* unit, const VuInstructionDec
                         return true;
                     if (fmac.is_using_register(upper_read[1], inst.dest()))
                         return true;
-                    if (fmac.is_using_register(upper_read[2], 1 << (3 - inst.bc())))
+                    if (fmac.is_using_register(upper_read[2], 1U << (3 - inst.bc())))
                         return true;
                 }
             }

@@ -33,6 +33,4 @@ public:
     int handle_data_reglist(const uqword data);
 
     int handle_data_image(const uqword data);
-
-    std::pair<size_t, SizedDwordRegister*> get_register_descriptor() const;
 };

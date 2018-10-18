@@ -67,7 +67,7 @@ public:
     /// Also known as the TPC (termination PC), treated as the same thing.
     /// Made to be 32-bit even though only 16-bits are used (bus maps easier).
     WordPcRegister pc;
-    VuBranchDelaySlot<> bdelay;
+    VuBranchDelaySlot bdelay;
 
     /// The CMSAR register used for micro subroutine execution.
     /// See VU Users Manual page 202.

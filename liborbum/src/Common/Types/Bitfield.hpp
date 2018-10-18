@@ -76,9 +76,9 @@ struct Bitfield
             throw std::logic_error("Cannot extract bitfield over 64 bit boundary from a uqword [not implemented]");
 
         if (start < 64)
-            return Bitfield(start, length).extract_from<To>(value.lo);
+            return Bitfield(start, length).extract_from<To, udword>(value.lo);
         else
-            return Bitfield(start - 64, length).extract_from<To>(value.hi);
+            return Bitfield(start - 64, length).extract_from<To, udword>(value.hi);
     }
 
     constexpr bool operator==(const Bitfield& rhs) const

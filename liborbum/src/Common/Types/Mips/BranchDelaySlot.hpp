@@ -1,7 +1,9 @@
 #pragma once
 
-#include <cereal/cereal.hpp>
+#include <array>
 #include <utility>
+
+#include <cereal/cereal.hpp>
 
 #include "Common/Types/Primitive.hpp"
 #include "Common/Types/Register/PcRegisters.hpp"
@@ -13,13 +15,13 @@
 /// configured branch slots have been run, and then the jump/branch occurs.
 /// A default slot size of 1 is used by the EE and IOP cores.
 /// slot + 1 is used internally as this is the real amount of instruction cycles.
-template <size_t slots = 1>
+/// inst_size specifies the instruction size of the unit (4 bytes for EE & IOP, 8 for VU)
+template <size_t slots = 1, size_t inst_size = Constants::MIPS::SIZE_MIPS_INSTRUCTION>
 class BranchDelaySlot
 {
 public:
     BranchDelaySlot() :
-        current_slot(0),
-        branch_pc(0)
+        pending_branches { std::pair(-1, 0), std::pair(-1, 0) }
     {
     }
 
@@ -39,6 +41,13 @@ public:
         throw std::runtime_error("BDS: More than 2 branches in queue - this should not happen");
     }
 
+    /// Obtains the PC of a soon-to-happen branching.
+    /// This is used by the *AL* (link register) branching/jumping instructions.
+    uptr get_branch_pc()
+    {
+        return pending_branches[0].second;
+    }
+
     /// Sets a pending branch to the direct address given.
     void set_branch_direct(const uptr address)
     {
@@ -49,14 +58,14 @@ public:
     /// the offset specified. Used for I-type instructions (imm's).
     void set_branch_itype(WordPcRegister& pc, const shword imm)
     {
-        add_branch_queue((pc.read_uword() + Constants::MIPS::SIZE_MIPS_INSTRUCTION) + (imm << 2));
+        add_branch_queue((pc.read_uword() + inst_size) + (imm * inst_size));
     }
 
     /// Sets a pending branch which combines the current PC address with
     /// the region address. Used for J-type instructions.
     void set_branch_jtype(WordPcRegister& pc, const uptr j_region_addr)
     {
-        add_branch_queue(((pc.read_uword() + Constants::MIPS::SIZE_MIPS_INSTRUCTION) & 0xF0000000) | (j_region_addr << 2));
+        add_branch_queue(((pc.read_uword() + inst_size) & 0xF0000000) | (j_region_addr * inst_size));
     }
 
     /// Advances the PC by either incrementing by 1 instruction,
@@ -88,7 +97,7 @@ public:
         }
 
         // Increment by 1 instruction.
-        pc.offset(Constants::MIPS::SIZE_MIPS_INSTRUCTION);
+        pc.offset(inst_size);
     }
 
     /// Stops the current branch in progress (used by exception handler).
@@ -110,7 +119,7 @@ public:
 protected:
     // sword of std::pair = cycles left before branching
     // uptr of std::pair = address to branch to
-    std::array<std::pair<sword, uptr>, 2> pending_branches;
+    std::array<std::pair<sword, uptr>, slots + 1> pending_branches;
 
 public:
     template <class Archive>
