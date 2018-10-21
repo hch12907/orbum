@@ -94,6 +94,8 @@ int CGif::time_step(const int ticks_available)
                 fifo->read(reinterpret_cast<ubyte*>(&data), NUMBER_BYTES_IN_QWORD);
 
                 cycles_consumed = handle_data_packed(data);
+
+                break;
             }
             case Giftag::DataFormat::Reglist:
             {
@@ -108,6 +110,8 @@ int CGif::time_step(const int ticks_available)
                 fifo->read(reinterpret_cast<ubyte*>(&data), NUMBER_BYTES_IN_QWORD);
 
                 cycles_consumed = handle_data_reglist(data);
+
+                break;
             }
             case Giftag::DataFormat::Image:
             case Giftag::DataFormat::Disabled:
@@ -119,6 +123,8 @@ int CGif::time_step(const int ticks_available)
                 fifo->read(reinterpret_cast<ubyte*>(&data), NUMBER_BYTES_IN_QWORD);
 
                 cycles_consumed = handle_data_image(data);
+
+                break;
             }
             default:
             {
@@ -149,10 +155,10 @@ int CGif::handle_tag(const Giftag tag)
     ctrl.tag = tag;
 
     // The tag is split into 4 parts and copied to the respective registers
-    r.ee.gif.tag0 = tag.tag.uw[0];
-    r.ee.gif.tag1 = tag.tag.uw[1];
-    r.ee.gif.tag2 = tag.tag.uw[2];
-    r.ee.gif.tag3 = tag.tag.uw[3];
+    r.ee.gif.tag0.write_uword(tag.tag.uw[0]);
+    r.ee.gif.tag1.write_uword(tag.tag.uw[1]);
+    r.ee.gif.tag2.write_uword(tag.tag.uw[2]);
+    r.ee.gif.tag3.write_uword(tag.tag.uw[3]);
 
     // Initialise the RGBAQ.Q value on every tag read.
     // See EE Users manual page 153.
@@ -349,7 +355,7 @@ int CGif::handle_data_packed(const uqword data)
     case 0xB:
     {
         // Reserved
-        throw std::runtime_error("Reserved register descriptor read from GIFtag");
+        throw std::runtime_error("GIF: Packed - Reserved register descriptor read from GIFtag");
     }
     case 0xC:
     {
@@ -383,7 +389,7 @@ int CGif::handle_data_packed(const uqword data)
     }
     default:
     {
-        throw std::runtime_error("Unknown register descriptor given");
+        throw std::runtime_error("GIF: Packed - Unknown register descriptor given");
     }
     }
     
@@ -505,7 +511,7 @@ int CGif::handle_data_reglist(const uqword data)
         case 0xB:
         {
             // Reserved
-            throw std::runtime_error("Reserved register descriptor read from GIFtag");
+            throw std::runtime_error("GIF: Reglist - Reserved register descriptor read from GIFtag");
         }
         case 0xC:
         {
@@ -534,7 +540,7 @@ int CGif::handle_data_reglist(const uqword data)
         }
         default:
         {
-            throw std::runtime_error("Unknown register descriptor given");
+            throw std::runtime_error("GIF: Reglist - Unknown register descriptor given");
         }
         }
 

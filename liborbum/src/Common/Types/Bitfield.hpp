@@ -70,10 +70,18 @@ struct Bitfield
     template <typename To>
     constexpr To extract_from(const uqword value) const
     {
-        // Most (all?) bitfields within uqword types are aligned to 64 bit 
-        // boundaries... But this should be easy to implement if needed.
-        if ((start < 64) && ((length + start) >= 64))
-            throw std::logic_error("Cannot extract bitfield over 64 bit boundary from a uqword [not implemented]");
+        // Special case for bitfields within uqword types that are not aligned to
+        // 64 bit boundaries
+        if ((start < 64) && ((length + start) > 64))
+        {
+            To a = Bitfield(start, 64 - start).extract_from<To, udword>(value.lo);
+            To b = Bitfield(64, start + length - 64).extract_from<To, udword>(value.hi);
+
+            return a | (b << (64 - start));
+
+            // Not sure if it works, so...
+            throw std::runtime_error("Non 64-bit aligned bitfields found!");
+        }
 
         if (start < 64)
             return Bitfield(start, length).extract_from<To, udword>(value.lo);

@@ -13,16 +13,16 @@ public:
 
     /// GIF memory mapped registers. See page 21 of EE Users Manual.
     GifRegister_Ctrl ctrl;
-    SizedWordRegister mode;
-    SizedWordRegister stat;
+    GifRegister_Mode mode;
+    GifRegister_Stat stat;
     ArrayByteMemory memory_3030;
-    SizedWordRegister tag0;
-    SizedWordRegister tag1;
-    SizedWordRegister tag2;
-    SizedWordRegister tag3;
-    SizedWordRegister cnt;
-    SizedWordRegister p3cnt;
-    SizedWordRegister p3tag;
+    GifRegister_Tag0 tag0;
+    GifRegister_Tag1 tag1;
+    GifRegister_Tag2 tag2;
+    GifRegister_Tag3 tag3;
+    GifRegister_Cnt cnt;
+    GifRegister_P3cnt p3cnt;
+    GifRegister_P3tag p3tag;
     ArrayByteMemory memory_30b0;
 
 public:

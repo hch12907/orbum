@@ -29,7 +29,7 @@ public:
     {
         for (auto& branch : pending_branches)
         {
-            if (branch.first == 0)
+            if (branch.first == -1)
             {
                 branch.first = slots + 1;
                 branch.second = address;
