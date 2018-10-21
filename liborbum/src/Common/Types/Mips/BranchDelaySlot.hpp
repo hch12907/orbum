@@ -29,7 +29,7 @@ public:
     {
         for (auto& branch : pending_branches)
         {
-            if (branch.first == -1)
+            if (branch.first == BranchState::EmptyBranch)
             {
                 branch.first = slots + 1;
                 branch.second = address;
@@ -75,13 +75,13 @@ public:
         for (auto& branch : pending_branches)
         {
             // Run for one cycle if >= 0
-            // (-1 is used for indicating empty branch, and 0 for "time to branch")
+            // (-1 is used for EmptyBranch, and 0 for ShouldBranch)
             if (branch.first >= 0)
                 branch.first -= 1;
         }
 
         // Check if the cycles needed to branch reaches 0.
-        if (pending_branches[0].first == 0)
+        if (pending_branches[0].first == BranchState::ShouldBranch)
         {
             pc.write_uword(pending_branches[0].second);
 
@@ -90,7 +90,7 @@ public:
             pending_branches[0].second = pending_branches[1].second;
 
             // Set second branch to empty
-            pending_branches[0].first = -1;
+            pending_branches[0].first = BranchState::EmptyBranch;
             pending_branches[0].second = 0;
 
             return;
@@ -105,7 +105,7 @@ public:
     {
         for (auto& branch : pending_branches)
         {
-            branch.first = -1;
+            branch.first = BranchState::EmptyBranch;
         }
     }
 
@@ -113,13 +113,19 @@ public:
     bool is_branch_pending() const
     {
         // Since pending_branches[1] will be moved to [0], just checking [0] would be enough
-        return pending_branches[0].first != -1;
+        return pending_branches[0].first != BranchState::EmptyBranch;
     }
 
 protected:
     // sword of std::pair = cycles left before branching
     // uptr of std::pair = address to branch to
     std::array<std::pair<sword, uptr>, slots + 1> pending_branches;
+
+    enum BranchState
+    {
+        EmptyBranch = -1,
+        ShouldBranch = 0,
+    };
 
 public:
     template <class Archive>
