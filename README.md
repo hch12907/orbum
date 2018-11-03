@@ -2,7 +2,8 @@
 
 
 #### PS2 Emulator
-Based off PCSX2's codebase, this is a completely rewritten PS2 emulator. Only useful to developers for now.
+Based off PCSX2's codebase, this is a completely rewritten PS2 emulator.
+It does not boot games (yet), only useful to developers for now.
 
 I can only work on this in my spare time, so I am thankful for any help!
 
@@ -46,5 +47,4 @@ Upon Ctrl-C, a number of options will be presented:
   - A save state (json/text readable) can be created that will dump the PS2 state for inspection. Uses the `saves/` folder.
 
 ## Licence
-
-[GPL3](https://www.gnu.org/licenses/gpl-3.0.en.html)
+[GPL3](LICENSE.md)
