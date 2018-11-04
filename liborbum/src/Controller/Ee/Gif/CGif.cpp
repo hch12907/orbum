@@ -60,7 +60,6 @@ int CGif::time_step(const int ticks_available)
     int cycles_consumed = 0;
 
     // Prioritise paths by 1 -> 2 -> 3.
-    // TODO: GIF code does not do path arbitration currently.
     // See EE Users Manual page 149. 
     DmaFifoQueue<>* paths[3] = {&fifo_gif_path1, &fifo_gif_path2, &fifo_gif_path3};
 
@@ -69,9 +68,12 @@ int CGif::time_step(const int ticks_available)
     int active_path = stat.extract_field(GifRegister_Stat::APATH);
     active_path -= (active_path != 0);
 
-    for (int i = active_path; i < 3; i++)
+    // If PATH3 is masked and not the active path, no arbitration is performed for it
+    int max_path = 2 + (active_path == 2 || stat.extract_field(GifRegister_Stat::M3P) || stat.extract_field(GifRegister_Stat::M3R));
+
+    for (int path_index = active_path; path_index < 3; path_index++)
     {
-        auto& fifo = paths[i];
+        auto& fifo = paths[path_index];
 
         // A GIFtag is always read before processing data.
         if (!count.extract_field(GifRegister_Cnt::LOOPCNT))
@@ -79,10 +81,19 @@ int CGif::time_step(const int ticks_available)
             if (!fifo->has_read_available(NUMBER_BYTES_IN_QWORD))
                 continue;
 
+            // P3TAG holding something means that PATH3 was previously interrupted, and needs to recontinue
+            if (r.ee.gif.p3tag.read_uword())
+            {
+                uqword p3data;
+                p3data.uw[0] = r.ee.gif.p3tag.read_uword();
+
+                cycles_consumed = handle_tag(Giftag(p3data));
+            }
+
             uqword data;
             fifo->read(reinterpret_cast<ubyte*>(&data), NUMBER_BYTES_IN_QWORD);
 
-            stat.insert_field(GifRegister_Stat::APATH, i + 1);
+            stat.insert_field(GifRegister_Stat::APATH, path_index + 1);
 
             cycles_consumed = handle_tag(Giftag(data));
         }
@@ -127,6 +138,32 @@ int CGif::time_step(const int ticks_available)
                 uqword data;
                 fifo->read(reinterpret_cast<ubyte*>(&data), NUMBER_BYTES_IN_QWORD);
 
+                // In intermittent mode, the GIF checks for other requests from PATH1 & PATH2,
+                // and priotises them over PATH3 if there are.
+                // The check is done every 8 qwords (or 1 slice).
+                if (stat.extract_field(GifRegister_Stat::APATH) == 3 && mode.extract_field(GifRegister_Mode::M3R))
+                {
+                    // The first 32 bits of PATH3 tag is written to P3TAG register in IMAGE mode
+                    r.ee.gif.p3tag.write_uword(ctrl.tag.tag.uw[0]);
+
+                    if (r.ee.gif.path3_qword_count < 8)
+                    {
+                        r.ee.gif.path3_qword_count += 1;
+                    }
+                    else
+                    {
+                        // If PATH3 is interuptted, save its LOOPCNT, and reset APATH & LOOPCNT to 0.
+                        if (stat.extract_field(GifRegister_Stat::P1Q) || stat.extract_field(GifRegister_Stat::P2Q))
+                        {
+                            r.ee.gif.p3cnt.insert_field(GifRegister_P3cnt::P3CNT, count.extract_field(GifRegister_Cnt::LOOPCNT));
+                            count.insert_field(GifRegister_Cnt::LOOPCNT, 0);
+                            stat.insert_field(GifRegister_Stat::APATH, 0);
+                        }
+
+                        r.ee.gif.path3_qword_count = 0;
+                    }
+                }
+
                 cycles_consumed = handle_data_image(data);
 
                 break;
@@ -152,6 +189,14 @@ int CGif::time_step(const int ticks_available)
                 break;
             }
         }
+
+        // If there are requests in queue for the PATHs, set the P*Q registers to 1.
+        stat.insert_field(GifRegister_Stat::P1Q, r.fifo_gif_path1.has_read_available(NUMBER_BYTES_IN_QWORD));
+        stat.insert_field(GifRegister_Stat::P2Q, r.fifo_gif_path2.has_read_available(NUMBER_BYTES_IN_QWORD));
+        stat.insert_field(GifRegister_Stat::P3Q, r.fifo_gif_path3.has_read_available(NUMBER_BYTES_IN_QWORD));
+
+        // Copies bit 0 and 2 of MODE to STAT
+        stat.write_uword(stat.read_uword() | (mode.read_uword() & 0b101));
 
         // Do not process other paths if at least one path was successfully processed.
         if (cycles_consumed)
@@ -198,8 +243,8 @@ int CGif::handle_tag(const Giftag tag)
         }
     }
 
-    count.insert_field(GifRegister_Cnt::LOOPCNT, tag.nloop());
-    count.insert_field(GifRegister_Cnt::REGCNT, tag.nreg());
+    count.insert_field(GifRegister_Cnt::LOOPCNT, static_cast<uword>(tag.nloop()));
+    count.insert_field(GifRegister_Cnt::REGCNT, static_cast<uword>(tag.nreg()));
 
     // 1 cycle consumed for the tag, and 1 cycle for the handling of the PRIM data
     // (always done even if it's not used). See the descriptions of the transfer

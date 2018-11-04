@@ -25,6 +25,9 @@ public:
     GifRegister_P3tag p3tag;
     ArrayByteMemory memory_30b0;
 
+    /// Used for intermittent mode.
+    uword path3_qword_count;
+
 public:
     template <class Archive>
     void serialize(Archive& archive)
