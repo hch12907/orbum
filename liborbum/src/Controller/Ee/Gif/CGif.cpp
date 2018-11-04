@@ -51,6 +51,7 @@ int CGif::time_step(const int ticks_available)
     auto& ctrl = r.ee.gif.ctrl;
     auto& mode = r.ee.gif.mode;
     auto& stat = r.ee.gif.stat;
+    auto& count = r.ee.gif.cnt;
 
     auto& fifo_gif_path1 = r.fifo_gif_path1;
     auto& fifo_gif_path2 = r.fifo_gif_path2;
@@ -63,20 +64,24 @@ int CGif::time_step(const int ticks_available)
     // See EE Users Manual page 149. 
     DmaFifoQueue<>* paths[3] = {&fifo_gif_path1, &fifo_gif_path2, &fifo_gif_path3};
 
-    for (int i = 0; i < 3; i++)
+    // Obtain the active path. If the GIF is idling (APATH == 0), then we start at
+    // PATH1 (which is paths[0] because zero-indexing).
+    int active_path = stat.extract_field(GifRegister_Stat::APATH);
+    active_path -= (active_path != 0);
+
+    for (int i = active_path; i < 3; i++)
     {
         auto& fifo = paths[i];
 
-        // When APATH is set to 0, the GIF is idling
         // A GIFtag is always read before processing data.
-        if (!stat.extract_field(GifRegister_Stat::APATH))
+        if (!count.extract_field(GifRegister_Cnt::LOOPCNT))
         {
             if (!fifo->has_read_available(NUMBER_BYTES_IN_QWORD))
                 continue;
 
             uqword data;
             fifo->read(reinterpret_cast<ubyte*>(&data), NUMBER_BYTES_IN_QWORD);
-            
+
             stat.insert_field(GifRegister_Stat::APATH, i + 1);
 
             cycles_consumed = handle_tag(Giftag(data));
@@ -133,9 +138,19 @@ int CGif::time_step(const int ticks_available)
             }
         }
 
+        // TODO: Confirm behaviour.
         if (ctrl.tag.eop())
         {
-            throw std::runtime_error("End of GS packet reached - what do we do?");
+            if (count.extract_field(GifRegister_Cnt::LOOPCNT))
+            {
+                BOOST_LOG(Core::get_logger()) << "GIF: EOP reached, but LOOPCNT > 0";   
+            }
+            else
+            {
+                BOOST_LOG(Core::get_logger()) << "GIF: EOP reached, and LOOPCNT == 0; stopping transfer";
+                stat.insert_field(GifRegister_Stat::APATH, 0);
+                break;
+            }
         }
 
         // Do not process other paths if at least one path was successfully processed.
@@ -151,6 +166,7 @@ int CGif::handle_tag(const Giftag tag)
 {
     auto& r = core->get_resources();
     auto& ctrl = r.ee.gif.ctrl;
+    auto& count = r.ee.gif.cnt;
 
     ctrl.tag = tag;
 
@@ -174,13 +190,16 @@ int CGif::handle_tag(const Giftag tag)
             // Output the packed PRIM data to GS if the PRE bit is set.
             if (tag.pre())
             {
-                throw std::runtime_error("Sending GIFtag packed PRIM data not implemented yet");
+                //throw std::runtime_error("Sending GIFtag packed PRIM data not implemented yet");
                 //uhword prim_value = tag.prim();
                 //auto& prim = r.gs.prim;
                 //prim.write_udword(prim_value);
             }
         }
     }
+
+    count.insert_field(GifRegister_Cnt::LOOPCNT, tag.nloop());
+    count.insert_field(GifRegister_Cnt::REGCNT, tag.nreg());
 
     // 1 cycle consumed for the tag, and 1 cycle for the handling of the PRIM data
     // (always done even if it's not used). See the descriptions of the transfer
@@ -396,17 +415,12 @@ int CGif::handle_data_packed(const uqword data)
     // +1 for incrementing, another +1 when inserting for restoring the index
     reg_count += 1;
     count.insert_field(GifRegister_Cnt::REGCNT, reg_count + 1);
-
+    
     if (reg_count == ctrl.tag.nreg())
     {
         reg_count = 0;
         count.insert_field(GifRegister_Cnt::REGCNT, 1);
         count.insert_field(GifRegister_Cnt::LOOPCNT, --loop_count);
-    }
-
-    if (loop_count == 0)
-    {
-        stat.insert_field(GifRegister_Stat::APATH, 0);
     }
 
     return 1;
@@ -556,7 +570,6 @@ int CGif::handle_data_reglist(const uqword data)
 
         if (loop_count == 0)
         {
-            stat.insert_field(GifRegister_Stat::APATH, 0);
             break;
         }
     }
@@ -586,9 +599,6 @@ int CGif::handle_data_image(const uqword data)
     }
 
     count.insert_field(GifRegister_Cnt::LOOPCNT, --loop_count);
-
-    if (loop_count == 0)
-        stat.insert_field(GifRegister_Stat::APATH, 0);
 
     return 1;
 }
