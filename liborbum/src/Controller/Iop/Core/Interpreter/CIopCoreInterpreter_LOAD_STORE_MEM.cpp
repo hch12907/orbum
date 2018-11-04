@@ -10,7 +10,7 @@ void CIopCoreInterpreter::LB(const IopCoreInstruction inst)
 
     // Rd = MEM[SB]. Address error or TLB error generated.
     auto& reg_dest = r.iop.core.r3000.gpr[inst.rt()];
-    auto& reg_source = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source.read_uword() + imm;
@@ -28,7 +28,7 @@ void CIopCoreInterpreter::LBU(const IopCoreInstruction inst)
 
     // Rd = MEM[UB]. Address error or TLB error generated.
     auto& reg_dest = r.iop.core.r3000.gpr[inst.rt()];
-    auto& reg_source = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source.read_uword() + imm;
@@ -46,7 +46,7 @@ void CIopCoreInterpreter::LH(const IopCoreInstruction inst)
 
     // Rd = MEM[SH]. Address error or TLB error generated.
     auto& reg_dest = r.iop.core.r3000.gpr[inst.rt()];
-    auto& reg_source = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source.read_uword() + imm;
@@ -64,7 +64,7 @@ void CIopCoreInterpreter::LHU(const IopCoreInstruction inst)
 
     // Rd = MEM[UH]. Address error or TLB error generated.
     auto& reg_dest = r.iop.core.r3000.gpr[inst.rt()];
-    auto& reg_source = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source.read_uword() + imm;
@@ -95,7 +95,7 @@ void CIopCoreInterpreter::LW(const IopCoreInstruction inst)
 
     // Rd = MEM[SW]. Address error or TLB error generated.
     auto& reg_dest = r.iop.core.r3000.gpr[inst.rt()];
-    auto& reg_source = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source.read_uword() + imm;
@@ -115,7 +115,7 @@ void CIopCoreInterpreter::LWL(const IopCoreInstruction inst)
     // Rd = MEM[SW]. Address error or TLB error generated.
     // Credit to PCSX2.
     auto& reg_dest = r.iop.core.r3000.gpr[inst.rt()];
-    auto& reg_source = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source.read_uword() + imm;
@@ -138,7 +138,7 @@ void CIopCoreInterpreter::LWR(const IopCoreInstruction inst)
     // Rd = MEM[SW]. Address error or TLB error generated.
     // Credit to PCSX2.
     auto& reg_dest = r.iop.core.r3000.gpr[inst.rt()];
-    auto& reg_source = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source.read_uword() + imm;
@@ -158,8 +158,8 @@ void CIopCoreInterpreter::SB(const IopCoreInstruction inst)
     auto& r = core->get_resources();
 
     // MEM[UB] = Rd. Address error or TLB error generated.
-    auto& reg_source1 = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
-    auto& reg_source2 = r.iop.core.r3000.gpr[inst.rt()];
+    const auto& reg_source1 = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
+    const auto& reg_source2 = r.iop.core.r3000.gpr[inst.rt()];
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source1.read_uword() + imm;
@@ -175,8 +175,8 @@ void CIopCoreInterpreter::SH(const IopCoreInstruction inst)
     auto& r = core->get_resources();
 
     // MEM[UH] = Rd. Address error or TLB error generated.
-    auto& reg_source1 = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
-    auto& reg_source2 = r.iop.core.r3000.gpr[inst.rt()];
+    const auto& reg_source1 = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
+    const auto& reg_source2 = r.iop.core.r3000.gpr[inst.rt()];
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source1.read_uword() + imm;
@@ -192,8 +192,8 @@ void CIopCoreInterpreter::SW(const IopCoreInstruction inst)
     auto& r = core->get_resources();
 
     // MEM[UW] = Rd. Address error or TLB error generated.
-    auto& reg_source1 = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
-    auto& reg_source2 = r.iop.core.r3000.gpr[inst.rt()];
+    const auto& reg_source1 = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
+    const auto& reg_source2 = r.iop.core.r3000.gpr[inst.rt()];
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source1.read_uword() + imm;
@@ -211,8 +211,8 @@ void CIopCoreInterpreter::SWL(const IopCoreInstruction inst)
     // TODO: check this, dont think its right. This should work for little-endian architectures (ie: x86), but not sure about big-endian. Luckily most machines are little-endian today, so this may never be a problem.
     // MEM[UW] = Rd. Address error or TLB error generated.
     // Credit to PCSX2.
-    auto& reg_source1 = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
-    auto& reg_source2 = r.iop.core.r3000.gpr[inst.rt()];
+    const auto& reg_source1 = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
+    const auto& reg_source2 = r.iop.core.r3000.gpr[inst.rt()];
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source1.read_uword() + imm;
@@ -240,8 +240,8 @@ void CIopCoreInterpreter::SWR(const IopCoreInstruction inst)
     // TODO: check this, dont think its right. This should work for little-endian architectures (ie: x86), but not sure about big-endian. Luckily most machines are little-endian today, so this may never be a problem.
     // MEM[UW] = Rd. Address error or TLB error generated.
     // Credit to PCSX2.
-    auto& reg_source1 = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
-    auto& reg_source2 = r.iop.core.r3000.gpr[inst.rt()];
+    const auto& reg_source1 = r.iop.core.r3000.gpr[inst.rs()]; // "Base"
+    const auto& reg_source2 = r.iop.core.r3000.gpr[inst.rt()];
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source1.read_uword() + imm;

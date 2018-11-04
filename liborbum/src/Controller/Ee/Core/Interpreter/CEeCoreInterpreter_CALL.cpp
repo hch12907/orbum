@@ -8,7 +8,7 @@ void CEeCoreInterpreter::BGEZAL(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // BRANCH_LINK(Rs >= 0). No exceptions.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
     auto offset = inst.s_imm();
 
     auto val_source1 = static_cast<sdword>(reg_source1.read_udword(0));
@@ -25,7 +25,7 @@ void CEeCoreInterpreter::BGEZALL(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // BRANCH_LINK(Rs >= 0). No exceptions.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
     auto offset = inst.s_imm();
 
     auto val_source1 = static_cast<sdword>(reg_source1.read_udword(0));
@@ -44,7 +44,7 @@ void CEeCoreInterpreter::BLTZAL(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // BRANCH_LINK(Rs < 0). No exceptions.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
     auto offset = inst.s_imm();
 
     auto val_source1 = static_cast<sdword>(reg_source1.read_udword(0));
@@ -61,7 +61,7 @@ void CEeCoreInterpreter::BLTZALL(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // BRANCH_LINK(Rs < 0). No exceptions.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
     auto offset = inst.s_imm();
 
     auto val_source1 = static_cast<sdword>(reg_source1.read_udword(0));
@@ -89,7 +89,7 @@ void CEeCoreInterpreter::JALR(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // JUMP_LINK_REGISTER(). Address error exception generated upon instruction load - but not in this instruction.
-    auto& reg_source = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source = r.ee.core.r5900.gpr[inst.rs()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
 
     reg_dest.write_udword(0, static_cast<udword>(r.ee.core.r5900.pc.read_uword() + Constants::MIPS::SIZE_MIPS_INSTRUCTION * 2));

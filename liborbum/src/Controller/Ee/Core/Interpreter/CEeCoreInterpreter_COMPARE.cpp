@@ -9,8 +9,8 @@ void CEeCoreInterpreter::SLT(const EeCoreInstruction inst)
 
     // Rd = SignExtended<sdword>((Rs < Rt) ? 1 : 0)
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
 
     auto val_source1 = static_cast<sdword>(reg_source1.read_udword(0));
@@ -27,7 +27,7 @@ void CEeCoreInterpreter::SLTI(const EeCoreInstruction inst)
 
     // Rd = SignExtended<sdword>((Rs < Imm) ? 1 : 0)
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rt()];
     auto imm = static_cast<sdword>(inst.s_imm());
 
@@ -44,7 +44,7 @@ void CEeCoreInterpreter::SLTIU(const EeCoreInstruction inst)
 
     // Rd = SignExtended<udword>((Rs < Imm) ? 1 : 0)
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rt()];
     auto imm = static_cast<udword>(static_cast<sdword>(inst.s_imm()));
 
@@ -61,8 +61,8 @@ void CEeCoreInterpreter::SLTU(const EeCoreInstruction inst)
 
     // Rd = SignExtended<udword>((Rs < Rt) ? 1 : 0)
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
 
     auto val_source1 = static_cast<udword>(reg_source1.read_udword(0));
@@ -79,8 +79,8 @@ void CEeCoreInterpreter::PCEQB(const EeCoreInstruction inst)
 
     // Rd = SignExtended<ubyte>((Rs == Rt) ? 0xFF : 0x00)
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
 
     for (auto i = 0; i < NUMBER_BYTES_IN_QWORD; i++)
@@ -98,8 +98,8 @@ void CEeCoreInterpreter::PCEQH(const EeCoreInstruction inst)
 
     // Rd = SignExtended<uhword>((Rs == Rt) ? 0xFFFF : 0x0000)
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
 
     for (auto i = 0; i < NUMBER_HWORDS_IN_QWORD; i++)
@@ -117,8 +117,8 @@ void CEeCoreInterpreter::PCEQW(const EeCoreInstruction inst)
 
     // Rd = SignExtended<uword>((Rs == Rt) ? 0xFFFFFFFF : 0x00000000)
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
 
     for (auto i = 0; i < NUMBER_WORDS_IN_QWORD; i++)
@@ -136,8 +136,8 @@ void CEeCoreInterpreter::PCGTB(const EeCoreInstruction inst)
 
     // Rd = SignExtended<ubyte>((Rs > Rt) ? 0xFF : 0x00)
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
 
     for (auto i = 0; i < NUMBER_BYTES_IN_QWORD; i++)
@@ -155,8 +155,8 @@ void CEeCoreInterpreter::PCGTH(const EeCoreInstruction inst)
 
     // Rd = SignExtended<uhword>((Rs > Rt) ? 0xFFFF : 0x0000)
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
 
     for (auto i = 0; i < NUMBER_HWORDS_IN_QWORD; i++)
@@ -174,8 +174,8 @@ void CEeCoreInterpreter::PCGTW(const EeCoreInstruction inst)
 
     // Rd = SignExtended<uword>((Rs > Rt) ? 0xFFFFFFFF : 0x00000000)
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
 
     for (auto i = 0; i < NUMBER_WORDS_IN_QWORD; i++)
@@ -196,8 +196,8 @@ void CEeCoreInterpreter::C_EQ_S(const EeCoreInstruction inst)
     if (!handle_cop1_usable())
         return;
 
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
-    auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
     auto& csr = r.ee.core.fpu.csr;                    // FCR[31] aka control status register.
 
     f32 val_source1 = reg_source1.read_float();
@@ -233,8 +233,8 @@ void CEeCoreInterpreter::C_LE_S(const EeCoreInstruction inst)
     if (!handle_cop1_usable())
         return;
 
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
-    auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
     auto& csr = r.ee.core.fpu.csr;                    // FCR[31] aka control status register.
 
     f32 val_source1 = reg_source1.read_float();
@@ -255,8 +255,8 @@ void CEeCoreInterpreter::C_LT_S(const EeCoreInstruction inst)
     if (!handle_cop1_usable())
         return;
 
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
-    auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
     auto& csr = r.ee.core.fpu.csr;                    // FCR[31] aka control status register.
 
     f32 val_source1 = reg_source1.read_float();

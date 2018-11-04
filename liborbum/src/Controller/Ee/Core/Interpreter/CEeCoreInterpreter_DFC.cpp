@@ -9,7 +9,7 @@ void CEeCoreInterpreter::PEXT5(const EeCoreInstruction inst)
 
     // Rd = EXTEND[1-5-5-5 -> 32](Rt)
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
 
     uword value[NUMBER_WORDS_IN_QWORD];
@@ -39,7 +39,7 @@ void CEeCoreInterpreter::PPAC5(const EeCoreInstruction inst)
 
     // Rd = PACK[32 -> 1-5-5-5](Rt)
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
 
     uhword value[NUMBER_WORDS_IN_QWORD];
@@ -72,7 +72,7 @@ void CEeCoreInterpreter::CVT_S_W(const EeCoreInstruction inst)
     if (!handle_cop1_usable())
         return;
 
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
     auto& reg_dest = r.ee.core.fpu.fpr[inst.shamt()]; // Fd
 
     reg_dest.write_float(static_cast<f32>(reg_source1.read_uword()));
@@ -86,7 +86,7 @@ void CEeCoreInterpreter::CVT_W_S(const EeCoreInstruction inst)
     if (!handle_cop1_usable())
         return;
 
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
     auto& reg_dest = r.ee.core.fpu.fpr[inst.shamt()]; // Fd
 
     f32 val_source1 = reg_source1.read_float();

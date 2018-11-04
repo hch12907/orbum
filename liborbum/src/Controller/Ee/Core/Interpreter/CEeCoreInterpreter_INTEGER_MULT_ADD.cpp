@@ -9,8 +9,8 @@ void CEeCoreInterpreter::MADD(const EeCoreInstruction inst)
 
     // (LO, HI, Rd) = (HI || LO) + SignExtend<sdword>(Rs[SW] * Rt[SW])
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
     auto& lo = r.ee.core.r5900.lo;
     auto& hi = r.ee.core.r5900.hi;
@@ -38,8 +38,8 @@ void CEeCoreInterpreter::MADDU(const EeCoreInstruction inst)
 
     // (LO, HI, Rd) = (HI || LO) + SignExtend<udword>(Rs[UW] * Rt[UW])
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
     auto& lo = r.ee.core.r5900.lo;
     auto& hi = r.ee.core.r5900.hi;
@@ -67,8 +67,8 @@ void CEeCoreInterpreter::PHMADH(const EeCoreInstruction inst)
 
     // (LO, HI, Rd)[i] = SignExtend<sword>(Rs[SH] * Rt[SH])[i] + SignExtend<sword>(Rs[SH] * Rt[SH])[i + 1]
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
     auto& lo = r.ee.core.r5900.lo;
     auto& hi = r.ee.core.r5900.hi;
@@ -114,8 +114,8 @@ void CEeCoreInterpreter::PHMSBH(const EeCoreInstruction inst)
 
     // (LO, HI, Rd)[i] = SignExtend<sword>(Rs[SH] * Rt[SH])[i] - SignExtend<sword>(Rs[SH] * Rt[SH])[i + 1]
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
     auto& lo = r.ee.core.r5900.lo;
     auto& hi = r.ee.core.r5900.hi;
@@ -162,8 +162,8 @@ void CEeCoreInterpreter::PMADDH(const EeCoreInstruction inst)
     // (LO, HI, Rd) = SignExtend<sword>(Rs[SH] * Rt[SH] + (HI,LO)[i]) (varying indexes - see EE Core Instruction Manual page 216).
     // (HI,LO)[i] = "C" in comments written below.
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "A"
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()]; // "B"
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "A"
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()]; // "B"
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
     auto& lo = r.ee.core.r5900.lo;
     auto& hi = r.ee.core.r5900.hi;
@@ -208,8 +208,8 @@ void CEeCoreInterpreter::PMADDUW(const EeCoreInstruction inst)
 
     // (LO, HI, Rd) = SignExtend<udword>(Rs[UW] * Rt[UW] + (HI || LO)[i]) (varying indexes - see EE Core Instruction Manual page 218).
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
     auto& lo = r.ee.core.r5900.lo;
     auto& hi = r.ee.core.r5900.hi;
@@ -245,8 +245,8 @@ void CEeCoreInterpreter::PMADDW(const EeCoreInstruction inst)
 
     // (LO, HI, Rd) = SignExtend<sdword>(Rs[SW] * Rt[SW] + (HI || LO)[i]) (varying indexes - see EE Core Instruction Manual page 220).
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
     auto& lo = r.ee.core.r5900.lo;
     auto& hi = r.ee.core.r5900.hi;
@@ -283,8 +283,8 @@ void CEeCoreInterpreter::PMSUBH(const EeCoreInstruction inst)
     // (LO, HI, Rd) = SignExtend<sword>((HI,LO)[i] - Rs[SH] * Rt[SH]) (varying indexes - see EE Core Instruction Manual page 216).
     // (HI,LO)[i] = "C" in comments written below.
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "A"
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()]; // "B"
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "A"
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()]; // "B"
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
     auto& lo = r.ee.core.r5900.lo;
     auto& hi = r.ee.core.r5900.hi;
@@ -329,8 +329,8 @@ void CEeCoreInterpreter::PMSUBW(const EeCoreInstruction inst)
 
     // (LO, HI, Rd) = SignExtend<sdword>((HI || LO)[i] - Rs[SW] * Rt[SW]) (varying indexes - see EE Core Instruction Manual page 220).
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
     auto& lo = r.ee.core.r5900.lo;
     auto& hi = r.ee.core.r5900.hi;

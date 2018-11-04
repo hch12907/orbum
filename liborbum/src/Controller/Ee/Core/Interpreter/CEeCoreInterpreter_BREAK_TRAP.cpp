@@ -38,8 +38,8 @@ void CEeCoreInterpreter::TEQ(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // TRAP_EXCEPTION(Rs == Rt).
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     auto val_source1 = static_cast<sdword>(reg_source1.read_udword(0));
     auto val_source2 = static_cast<sdword>(reg_source2.read_udword(0));
@@ -53,7 +53,7 @@ void CEeCoreInterpreter::TEQI(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // TRAP_EXCEPTION(Rs == imm).
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
     auto imm = static_cast<sdword>(inst.s_imm());
 
     auto val_source1 = static_cast<sdword>(reg_source1.read_udword(0));
@@ -67,8 +67,8 @@ void CEeCoreInterpreter::TGE(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // TRAP_EXCEPTION(Rs >= Rt).
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     auto val_source1 = static_cast<sdword>(reg_source1.read_udword(0));
     auto val_source2 = static_cast<sdword>(reg_source2.read_udword(0));
@@ -82,7 +82,7 @@ void CEeCoreInterpreter::TGEI(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // TRAP_EXCEPTION(Rs >= imm).
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
     auto imm = static_cast<sdword>(inst.s_imm());
 
     auto val_source1 = static_cast<sdword>(reg_source1.read_udword(0));
@@ -96,7 +96,7 @@ void CEeCoreInterpreter::TGEIU(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // TRAP_EXCEPTION(Rs >= imm).
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
     auto imm = static_cast<udword>(static_cast<sdword>(inst.s_imm())); // Sign-extend first, then treat as unsigned. This is according to the docs.
 
     auto val_source1 = static_cast<udword>(reg_source1.read_udword(0));
@@ -110,8 +110,8 @@ void CEeCoreInterpreter::TGEU(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // TRAP_EXCEPTION(Rs >= Rt).
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     auto val_source1 = static_cast<udword>(reg_source1.read_udword(0));
     auto val_source2 = static_cast<udword>(reg_source2.read_udword(0));
@@ -125,8 +125,8 @@ void CEeCoreInterpreter::TLT(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // TRAP_EXCEPTION(Rs < Rt).
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     auto val_source1 = static_cast<sdword>(reg_source1.read_udword(0));
     auto val_source2 = static_cast<sdword>(reg_source2.read_udword(0));
@@ -140,7 +140,7 @@ void CEeCoreInterpreter::TLTI(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // TRAP_EXCEPTION(Rs < imm).
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
     auto imm = static_cast<sdword>(inst.s_imm());
 
     auto val_source1 = static_cast<sdword>(reg_source1.read_udword(0));
@@ -154,7 +154,7 @@ void CEeCoreInterpreter::TLTIU(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // TRAP_EXCEPTION(Rs < imm).
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
     auto imm = static_cast<udword>(static_cast<sdword>(inst.s_imm())); // Sign-extend first, then treat as unsigned. This is according to the docs.
 
     auto val_source1 = static_cast<udword>(reg_source1.read_udword(0));
@@ -168,8 +168,8 @@ void CEeCoreInterpreter::TLTU(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // TRAP_EXCEPTION(Rs < Rt).
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     if (reg_source1.read_udword(0) < reg_source2.read_udword(0))
         handle_exception(EeCoreException::EX_TRAP);
@@ -180,8 +180,8 @@ void CEeCoreInterpreter::TNE(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // TRAP_EXCEPTION(Rs != Rt).
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     auto val_source1 = static_cast<sdword>(reg_source1.read_udword(0));
     auto val_source2 = static_cast<sdword>(reg_source2.read_udword(0));
@@ -195,7 +195,7 @@ void CEeCoreInterpreter::TNEI(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // TRAP_EXCEPTION(Rs != imm).
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
     auto imm = static_cast<sdword>(inst.s_imm());
 
     auto val_source1 = static_cast<sdword>(reg_source1.read_udword(0));

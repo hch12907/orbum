@@ -94,6 +94,7 @@ void CIopCore::handle_interrupt_check()
     if (!cop0.status.interrupts_masked)
     {
         uword ip_cause = cop0.cause.extract_field(IopCoreCop0Register_Cause::IP);
+        cop0.cause.sync(); // We want that sweet side-effect
         uword im_status = cop0.status.extract_field(IopCoreCop0Register_Status::IM);
         if (ip_cause & im_status)
         {
@@ -245,6 +246,7 @@ bool CIopCore::handle_cop0_usable()
     {
         // Coprocessor was not usable. Raise an exception.
         r.iop.core.cop0.cause.insert_field(IopCoreCop0Register_Cause::CE, 0);
+        r.iop.core.cop0.cause.sync(); // We want that sweet side-effect
         handle_exception(IopCoreException::EX_COPROCESSOR_UNUSABLE);
         return false;
     }
@@ -292,6 +294,7 @@ void CIopCore::handle_exception(const IopCoreException exception)
 
     // Set Cause.ExeCode value.
     cop0.cause.insert_field(IopCoreCop0Register_Cause::EXCCODE, static_cast<uword>(exception));
+    cop0.cause.sync(); // We want that sweet side-effect
 
     // Set EPC and Cause.BD fields, based on if we are in the branch delay slot.
     // Note that the EPC register should point to the instruction that caused the exception.
@@ -301,6 +304,7 @@ void CIopCore::handle_exception(const IopCoreException exception)
         uword pc_addr = pc.read_uword() - Constants::MIPS::SIZE_MIPS_INSTRUCTION;
         cop0.epc.write_uword(pc_addr);
         cop0.cause.insert_field(IopCoreCop0Register_Cause::BD, 1);
+        cop0.cause.sync(); // We want that sweet side-effect
         bdelay.stop_branch();
     }
     else
@@ -308,6 +312,7 @@ void CIopCore::handle_exception(const IopCoreException exception)
         uword pc_addr = pc.read_uword();
         cop0.epc.write_uword(pc_addr);
         cop0.cause.insert_field(IopCoreCop0Register_Cause::BD, 0);
+        cop0.cause.sync(); // We want that sweet side-effect
     }
 
     // Select the vector to use (set ex_vector_offset).

@@ -9,7 +9,7 @@ void CEeCoreInterpreter::MFHI(const EeCoreInstruction inst)
 
     // Rd = HI. No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.hi;
+    const auto& reg_source1 = r.ee.core.r5900.hi;
 
     reg_dest.write_udword(0, reg_source1.read_udword(0));
 }
@@ -20,7 +20,7 @@ void CEeCoreInterpreter::MFLO(const EeCoreInstruction inst)
 
     // Rd = LO. No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.lo;
+    const auto& reg_source1 = r.ee.core.r5900.lo;
 
     reg_dest.write_udword(0, reg_source1.read_udword(0));
 }
@@ -30,8 +30,8 @@ void CEeCoreInterpreter::MOVN(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // Rd = Rs, if Rt =/= 0. No exceptions.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
 
     if (reg_source2.read_udword(0) != 0)
@@ -43,8 +43,8 @@ void CEeCoreInterpreter::MOVZ(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // Rd = Rs, if Rt == 0. No exceptions.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
 
     if (reg_source2.read_udword(0) == 0)
@@ -56,7 +56,7 @@ void CEeCoreInterpreter::MTHI(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // HI = Rd. No exceptions.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rd()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rd()];
     auto& reg_dest = r.ee.core.r5900.hi;
 
     reg_dest.write_udword(0, reg_source1.read_udword(0));
@@ -67,7 +67,7 @@ void CEeCoreInterpreter::MTLO(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // LO = Rd. No exceptions.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rd()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rd()];
     auto& reg_dest = r.ee.core.r5900.lo;
 
     reg_dest.write_udword(0, reg_source1.read_udword(0));
@@ -79,7 +79,7 @@ void CEeCoreInterpreter::MFHI1(const EeCoreInstruction inst)
 
     // Rd = HI1. No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.hi;
+    const auto& reg_source1 = r.ee.core.r5900.hi;
 
     reg_dest.write_udword(0, reg_source1.read_udword(1));
 }
@@ -90,7 +90,7 @@ void CEeCoreInterpreter::MFLO1(const EeCoreInstruction inst)
 
     // Rd = LO1. No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.lo;
+    const auto& reg_source1 = r.ee.core.r5900.lo;
 
     reg_dest.write_udword(0, reg_source1.read_udword(1));
 }
@@ -100,7 +100,7 @@ void CEeCoreInterpreter::MTHI1(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // HI1 = Rd. No exceptions.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rd()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rd()];
     auto& reg_dest = r.ee.core.r5900.hi;
 
     reg_dest.write_udword(1, reg_source1.read_udword(0));
@@ -111,7 +111,7 @@ void CEeCoreInterpreter::MTLO1(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // LO1 = Rd. No exceptions.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rd()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rd()];
     auto& reg_dest = r.ee.core.r5900.lo;
 
     reg_dest.write_udword(1, reg_source1.read_udword(0));
@@ -123,7 +123,7 @@ void CEeCoreInterpreter::PMFHI(const EeCoreInstruction inst)
 
     // Rd = HI. No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.hi;
+    const auto& reg_source1 = r.ee.core.r5900.hi;
 
     reg_dest.write_udword(0, reg_source1.read_udword(0));
     reg_dest.write_udword(1, reg_source1.read_udword(1));
@@ -284,7 +284,7 @@ void CEeCoreInterpreter::PMFLO(const EeCoreInstruction inst)
 
     // Rd = LO. No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source2 = r.ee.core.r5900.lo;
+    const auto& reg_source2 = r.ee.core.r5900.lo;
 
     reg_dest.write_udword(0, reg_source2.read_udword(0));
     reg_dest.write_udword(1, reg_source2.read_udword(1));
@@ -295,7 +295,7 @@ void CEeCoreInterpreter::PMTHI(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // HI = Rd. No exceptions.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
     auto& reg_dest = r.ee.core.r5900.hi;
 
     reg_dest.write_udword(0, reg_source1.read_udword(0));
@@ -307,7 +307,7 @@ void CEeCoreInterpreter::PMTHL_LW(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // (HI, LO) = Rs. No exceptions.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
     auto& hi = r.ee.core.r5900.hi;
     auto& lo = r.ee.core.r5900.lo;
 
@@ -328,7 +328,7 @@ void CEeCoreInterpreter::PMTLO(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // LO = Rd. No exceptions.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
     auto& reg_dest = r.ee.core.r5900.lo;
 
     reg_dest.write_udword(0, reg_source1.read_udword(0));
@@ -344,7 +344,7 @@ void CEeCoreInterpreter::MFC1(const EeCoreInstruction inst)
         return;
 
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rt()];
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
 
     reg_dest.write_uword(0, reg_source1.read_uword());
 
@@ -371,7 +371,7 @@ void CEeCoreInterpreter::MOV_S(const EeCoreInstruction inst)
     if (!handle_cop1_usable())
         return;
 
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
     auto& reg_dest = r.ee.core.fpu.fpr[inst.shamt()]; // Fd
 
     reg_dest.write_float(reg_source1.read_float());
@@ -385,7 +385,7 @@ void CEeCoreInterpreter::MTC1(const EeCoreInstruction inst)
     if (!handle_cop1_usable())
         return;
 
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.fpu.fpr[inst.rd()]; // Fs
 
     reg_dest.write_uword(reg_source1.read_uword(0));

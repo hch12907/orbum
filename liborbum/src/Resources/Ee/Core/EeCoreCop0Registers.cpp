@@ -72,10 +72,26 @@ void EeCoreCop0Register_Cause::clear_irq_line(const int irq)
     irq_lines[irq] = false;
 }
 
-uword EeCoreCop0Register_Cause::read_uword()
+uword EeCoreCop0Register_Cause::read_uword() const
 {
     uword value = SizedWordRegister::read_uword();
 
+    uword ip = 0;
+    for (int i = 0; i < 8; i++)
+        if (irq_lines[i])
+            ip |= (1 << i);
+
+    value = IP.insert_into(value, ip);
+
+    // Maybe no point in writing it back...
+    // SizedWordRegister::write_uword(value);
+    return value;
+}
+
+uword EeCoreCop0Register_Cause::sync()
+{
+    uword value = SizedWordRegister::read_uword();
+    
     uword ip = 0;
     for (int i = 0; i < 8; i++)
         if (irq_lines[i])

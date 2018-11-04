@@ -158,7 +158,10 @@ public:
     void clear_irq_line(const int irq);
 
     /// Syncs the register state with the IRQ flags and returns the register value.
-    uword read_uword() override;
+    uword read_uword() const override;
+
+    /// Syncs the register state with the IRQ flags and writes the result into the register.
+    uword sync();
 
 private:
     /// IRQ line flags.

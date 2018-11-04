@@ -13,19 +13,19 @@ public:
     virtual void initialize() = 0;
 
     /// Read/write functions to access the register, with subclassed functionality.
-    virtual ubyte read_ubyte(const size_t offset) = 0;
+    virtual ubyte read_ubyte(const size_t offset) const = 0;
     virtual void write_ubyte(const size_t offset, const ubyte value) = 0;
-    virtual uhword read_uhword(const size_t offset) = 0;
+    virtual uhword read_uhword(const size_t offset) const = 0;
     virtual void write_uhword(const size_t offset, const uhword value) = 0;
-    virtual uword read_uword(const size_t offset) = 0;
+    virtual uword read_uword(const size_t offset) const = 0;
     virtual void write_uword(const size_t offset, const uword value) = 0;
-    virtual udword read_udword(const size_t offset) = 0;
+    virtual udword read_udword(const size_t offset) const = 0;
     virtual void write_udword(const size_t offset, const udword value) = 0;
-    virtual uqword read_uqword() = 0;
+    virtual uqword read_uqword() const = 0;
     virtual void write_uqword(const uqword value) = 0;
 
     /// Read/write floats - wrappers around read/write uword.
-    f32 read_float(const size_t offset)
+    f32 read_float(const size_t offset) const
     {
         const uword raw = read_uword(offset);
         return *reinterpret_cast<const f32*>(&raw);

@@ -9,8 +9,8 @@ void CEeCoreInterpreter::ADD(const EeCoreInstruction inst)
 
     // Rd = Rs + Rt (Exception on Integer Overflow).
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     auto val_source1 = static_cast<sword>(reg_source1.read_uword(0));
     auto val_source2 = static_cast<sword>(reg_source2.read_uword(0));
@@ -29,7 +29,7 @@ void CEeCoreInterpreter::ADDI(const EeCoreInstruction inst)
 
     // Rt = Rs + Imm (signed) (Exception on Integer Overflow).
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rt()];
-    auto& reg_source = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source = r.ee.core.r5900.gpr[inst.rs()];
     auto imm = inst.s_imm();
 
     auto val_source = static_cast<sword>(reg_source.read_uword(0));
@@ -48,7 +48,7 @@ void CEeCoreInterpreter::ADDIU(const EeCoreInstruction inst)
 
     // Rt = Rs + Imm (signed).
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rt()];
-    auto& reg_source = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source = r.ee.core.r5900.gpr[inst.rs()];
     auto imm = inst.s_imm();
 
     auto val_source = static_cast<sword>(reg_source.read_uword(0));
@@ -63,8 +63,8 @@ void CEeCoreInterpreter::ADDU(const EeCoreInstruction inst)
 
     // Rd = Rs + Rt
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     auto val_source1 = static_cast<sword>(reg_source1.read_uword(0));
     auto val_source2 = static_cast<sword>(reg_source2.read_uword(0));
@@ -79,8 +79,8 @@ void CEeCoreInterpreter::DADD(const EeCoreInstruction inst)
 
     // Rd = Rs + Rt (Exception on Integer Overflow).
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     auto val_source1 = static_cast<sdword>(reg_source1.read_udword(0));
     auto val_source2 = static_cast<sdword>(reg_source2.read_udword(0));
@@ -99,7 +99,7 @@ void CEeCoreInterpreter::DADDI(const EeCoreInstruction inst)
 
     // Rt = Rs + Imm (signed) (Exception on Integer Overflow).
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rt()];
-    auto& reg_source = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source = r.ee.core.r5900.gpr[inst.rs()];
     auto imm = inst.s_imm();
 
     auto val_source = static_cast<sdword>(reg_source.read_udword(0));
@@ -118,7 +118,7 @@ void CEeCoreInterpreter::DADDIU(const EeCoreInstruction inst)
 
     // Rt = Rs + Imm (signed).
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rt()];
-    auto& reg_source = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source = r.ee.core.r5900.gpr[inst.rs()];
     auto imm = inst.s_imm();
 
     auto val_source = static_cast<sdword>(reg_source.read_udword(0));
@@ -133,8 +133,8 @@ void CEeCoreInterpreter::DADDU(const EeCoreInstruction inst)
 
     // Rd = Rs + Rt
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     auto val_source1 = static_cast<sdword>(reg_source1.read_udword(0));
     auto val_source2 = static_cast<sdword>(reg_source2.read_udword(0));
@@ -149,8 +149,8 @@ void CEeCoreInterpreter::DSUB(const EeCoreInstruction inst)
 
     // Rd = Rs - Rt (Exception on Integer Overflow).
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     auto val_source1 = static_cast<sdword>(reg_source1.read_udword(0));
     auto val_source2 = static_cast<sdword>(reg_source2.read_udword(0));
@@ -169,8 +169,8 @@ void CEeCoreInterpreter::DSUBU(const EeCoreInstruction inst)
 
     // Rd = Rs - Rt
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     auto val_source1 = static_cast<sdword>(reg_source1.read_udword(0));
     auto val_source2 = static_cast<sdword>(reg_source2.read_udword(0));
@@ -185,8 +185,8 @@ void CEeCoreInterpreter::SUB(const EeCoreInstruction inst)
 
     // Rd = Rs - Rt (Exception on Integer Overflow).
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     auto val_source1 = static_cast<sword>(reg_source1.read_uword(0));
     auto val_source2 = static_cast<sword>(reg_source2.read_uword(0));
@@ -205,8 +205,8 @@ void CEeCoreInterpreter::SUBU(const EeCoreInstruction inst)
 
     // Rd = Rs - Rt
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     auto val_source1 = static_cast<sword>(reg_source1.read_uword(0));
     auto val_source2 = static_cast<sword>(reg_source2.read_uword(0));
@@ -221,8 +221,8 @@ void CEeCoreInterpreter::PADDB(const EeCoreInstruction inst)
 
     // Parallel Rd[SB] = Rs[SB] + Rt[SB]
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     ubyte value[NUMBER_BYTES_IN_QWORD];
 
@@ -239,8 +239,8 @@ void CEeCoreInterpreter::PADDH(const EeCoreInstruction inst)
 
     // Parallel Rd[SH] = Rs[SH] + Rt[SH]
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     uhword value[NUMBER_HWORDS_IN_QWORD];
 
@@ -257,8 +257,8 @@ void CEeCoreInterpreter::PADDSB(const EeCoreInstruction inst)
 
     // Parallel Rd[SB] = Rs[SB] + Rt[SB] Saturated
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     shword value[NUMBER_BYTES_IN_QWORD];
 
@@ -283,8 +283,8 @@ void CEeCoreInterpreter::PADDSH(const EeCoreInstruction inst)
 
     // Parallel Rd[SH] = Rs[SH] + Rt[SH] Saturated
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     sword value[NUMBER_HWORDS_IN_QWORD];
 
@@ -309,8 +309,8 @@ void CEeCoreInterpreter::PADDSW(const EeCoreInstruction inst)
 
     // Parallel Rd[SW] = Rs[SW] + Rt[SW] Saturated
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     sdword value[NUMBER_WORDS_IN_QWORD];
 
@@ -335,8 +335,8 @@ void CEeCoreInterpreter::PADDUB(const EeCoreInstruction inst)
 
     // Parallel Rd[UB] = Rs[UB] + Rt[UB]
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     uhword value[NUMBER_BYTES_IN_QWORD];
 
@@ -359,8 +359,8 @@ void CEeCoreInterpreter::PADDUH(const EeCoreInstruction inst)
 
     // Parallel Rd[UH] = Rs[UH] + Rt[UH]
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     uword value[NUMBER_HWORDS_IN_QWORD];
 
@@ -383,8 +383,8 @@ void CEeCoreInterpreter::PADDUW(const EeCoreInstruction inst)
 
     // Parallel Rd[UW] = Rs[UW] + Rt[UW]
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     udword value[NUMBER_WORDS_IN_QWORD];
 
@@ -408,8 +408,8 @@ void CEeCoreInterpreter::PADDW(const EeCoreInstruction inst)
     // Parallel Rd[SW] = Rs[SW] + Rt[SW].
     // Not explicitly mentioned, but looks like it doesnt treat overflowing.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     uword value[NUMBER_WORDS_IN_QWORD];
 
@@ -426,8 +426,8 @@ void CEeCoreInterpreter::PADSBH(const EeCoreInstruction inst)
 
     // Parallel Rd[SH] = Rs[SH] -/+ Rt[SH] (minus for lower hwords, plus for higher hwords)
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     uhword value[NUMBER_HWORDS_IN_QWORD];
 
@@ -449,8 +449,8 @@ void CEeCoreInterpreter::PSUBB(const EeCoreInstruction inst)
 
     // Parallel Rd[SB] = Rs[SB] - Rt[SB]
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     ubyte value[NUMBER_BYTES_IN_QWORD];
 
@@ -467,8 +467,8 @@ void CEeCoreInterpreter::PSUBH(const EeCoreInstruction inst)
 
     // Parallel Rd[SH] = Rs[SH] - Rt[SH]
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     uhword value[NUMBER_HWORDS_IN_QWORD];
 
@@ -485,8 +485,8 @@ void CEeCoreInterpreter::PSUBSB(const EeCoreInstruction inst)
 
     // Parallel Rd[SB] = Rs[SB] - Rt[SB] Saturated
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     shword value[NUMBER_BYTES_IN_QWORD];
 
@@ -511,8 +511,8 @@ void CEeCoreInterpreter::PSUBSH(const EeCoreInstruction inst)
 
     // Parallel Rd[SH] = Rs[SH] + Rt[SH] Saturated
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     sword value[NUMBER_HWORDS_IN_QWORD];
 
@@ -537,8 +537,8 @@ void CEeCoreInterpreter::PSUBSW(const EeCoreInstruction inst)
 
     // Parallel Rd[SW] = Rs[SW] - Rt[SW] Saturated
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     sdword value[NUMBER_WORDS_IN_QWORD];
 
@@ -563,8 +563,8 @@ void CEeCoreInterpreter::PSUBUB(const EeCoreInstruction inst)
 
     // Parallel Rd[UB] = Rs[UB] - Rt[UB]
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     shword value[NUMBER_BYTES_IN_QWORD];
 
@@ -587,8 +587,8 @@ void CEeCoreInterpreter::PSUBUH(const EeCoreInstruction inst)
 
     // Parallel Rd[UH] = Rs[UH] - Rt[UH]
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     sword value[NUMBER_HWORDS_IN_QWORD];
 
@@ -611,8 +611,8 @@ void CEeCoreInterpreter::PSUBUW(const EeCoreInstruction inst)
 
     // Parallel Rd[UW] = Rs[UW] - Rt[UW]
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     sdword value[NUMBER_WORDS_IN_QWORD];
 
@@ -635,8 +635,8 @@ void CEeCoreInterpreter::PSUBW(const EeCoreInstruction inst)
 
     // Parallel Rd[SW] = Rs[SW] - Rt[SW]
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     uword value[NUMBER_WORDS_IN_QWORD];
 

@@ -9,7 +9,7 @@ void CEeCoreInterpreter::LB(const EeCoreInstruction inst)
 
     // Rd = MEM[SB]. Address error or TLB error generated.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rt()];
-    auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source.read_uword(0) + imm;
@@ -27,7 +27,7 @@ void CEeCoreInterpreter::LBU(const EeCoreInstruction inst)
 
     // Rd = MEM[UB]. Address error or TLB error generated.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rt()];
-    auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source.read_uword(0) + imm;
@@ -45,7 +45,7 @@ void CEeCoreInterpreter::LD(const EeCoreInstruction inst)
 
     // Rd = MEM[UD]. Address error or TLB error generated.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rt()];
-    auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source.read_uword(0) + imm;
@@ -65,7 +65,7 @@ void CEeCoreInterpreter::LDL(const EeCoreInstruction inst)
     // MEM[UD] = Rd. Address error or TLB error generated.
     // Credit to PCSX2.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rt()];
-    auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source.read_uword(0) + imm;
@@ -88,7 +88,7 @@ void CEeCoreInterpreter::LDR(const EeCoreInstruction inst)
     // Rd = MEM[UD]. Address error or TLB error generated.
     // Credit to PCSX2.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rt()];
-    auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source.read_uword(0) + imm;
@@ -109,7 +109,7 @@ void CEeCoreInterpreter::LH(const EeCoreInstruction inst)
 
     // Rd = MEM[SH]. Address error or TLB error generated.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rt()];
-    auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source.read_uword(0) + imm;
@@ -127,7 +127,7 @@ void CEeCoreInterpreter::LHU(const EeCoreInstruction inst)
 
     // Rd = MEM[UH]. Address error or TLB error generated.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rt()];
-    auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source.read_uword(0) + imm;
@@ -158,7 +158,7 @@ void CEeCoreInterpreter::LW(const EeCoreInstruction inst)
 
     // Rd = MEM[SW]. Address error or TLB error generated.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rt()];
-    auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source.read_uword(0) + imm;
@@ -178,7 +178,7 @@ void CEeCoreInterpreter::LWL(const EeCoreInstruction inst)
     // Rd = MEM[SW]. Address error or TLB error generated.
     // Credit to PCSX2.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rt()];
-    auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source.read_uword(0) + imm;
@@ -201,7 +201,7 @@ void CEeCoreInterpreter::LWR(const EeCoreInstruction inst)
     // Rd = MEM[SW]. Address error or TLB error generated.
     // Credit to PCSX2.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rt()];
-    auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source.read_uword(0) + imm;
@@ -222,7 +222,7 @@ void CEeCoreInterpreter::LWU(const EeCoreInstruction inst)
 
     // Rd = MEM[UW]. Address error or TLB error generated.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rt()];
-    auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source.read_uword(0) + imm;
@@ -240,7 +240,7 @@ void CEeCoreInterpreter::LQ(const EeCoreInstruction inst)
 
     // Rd = MEM[UQ]. Address error or TLB error generated.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rt()];
-    auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = (reg_source.read_uword(0) + imm);
@@ -261,7 +261,7 @@ void CEeCoreInterpreter::LWC1(const EeCoreInstruction inst)
         return;
 
     auto& reg_dest = r.ee.core.fpu.fpr[inst.rt()];     // Ft
-    auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = (reg_source.read_uword(0) + imm);
@@ -282,7 +282,7 @@ void CEeCoreInterpreter::LQC2(const EeCoreInstruction inst)
         return;
 
     auto& reg_dest = r.ee.vpu.vu.unit_0.vf[inst.rt()];
-    auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = (reg_source.read_uword(0) + imm);

@@ -14,13 +14,13 @@ public:
     virtual void initialize() = 0;
 
     /// Read/write functions to access the register, with subclassed functionality.
-    virtual ubyte read_ubyte(const size_t offset) = 0;
+    virtual ubyte read_ubyte(const size_t offset) const = 0;
     virtual void write_ubyte(const size_t offset, const ubyte value) = 0;
-    virtual uhword read_uhword() = 0;
+    virtual uhword read_uhword() const = 0;
     virtual void write_uhword(const uhword value) = 0;
 
     /// Bitfield extraction/insertion.
-    uhword extract_field(const Bitfield field)
+    uhword extract_field(const Bitfield field) const
     {
         return field.extract_from(read_uhword());
     }

@@ -11,8 +11,8 @@ void CEeCoreInterpreter::PMAXH(const EeCoreInstruction inst)
 
     // Rd = MAX(Rs, Rt)
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
 
     uhword value[NUMBER_HWORDS_IN_QWORD];
@@ -36,8 +36,8 @@ void CEeCoreInterpreter::PMAXW(const EeCoreInstruction inst)
 
     // Rd = MAX(Rs, Rt)
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
 
     uword value[NUMBER_WORDS_IN_QWORD];
@@ -61,8 +61,8 @@ void CEeCoreInterpreter::PMINH(const EeCoreInstruction inst)
 
     // Rd = MIN(Rs, Rt)
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
 
     uhword value[NUMBER_HWORDS_IN_QWORD];
@@ -86,8 +86,8 @@ void CEeCoreInterpreter::PMINW(const EeCoreInstruction inst)
 
     // Rd = MIN(Rs, Rt)
     // No Exceptions generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
 
     uword value[NUMBER_WORDS_IN_QWORD];
@@ -114,8 +114,8 @@ void CEeCoreInterpreter::MAX_S(const EeCoreInstruction inst)
     if (!handle_cop1_usable())
         return;
 
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
-    auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
     auto& reg_dest = r.ee.core.fpu.fpr[inst.shamt()]; // Fd
     auto& csr = r.ee.core.fpu.csr;                    // FCR[31] aka control status register.
 
@@ -135,8 +135,8 @@ void CEeCoreInterpreter::MIN_S(const EeCoreInstruction inst)
     if (!handle_cop1_usable())
         return;
 
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
-    auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
     auto& reg_dest = r.ee.core.fpu.fpr[inst.shamt()]; // Fd
     auto& csr = r.ee.core.fpu.csr;                    // FCR[31] aka control status register.
 

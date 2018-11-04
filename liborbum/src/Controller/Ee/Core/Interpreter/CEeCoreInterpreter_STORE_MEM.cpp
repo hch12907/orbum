@@ -8,8 +8,8 @@ void CEeCoreInterpreter::SB(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // MEM[UB] = Rd. Address error or TLB error generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source1.read_uword(0) + imm;
@@ -25,8 +25,8 @@ void CEeCoreInterpreter::SD(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // MEM[UD] = Rt. Address error or TLB error generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source1.read_uword(0) + imm;
@@ -44,8 +44,8 @@ void CEeCoreInterpreter::SDL(const EeCoreInstruction inst)
     // TODO: check this, dont think its right. This should work for little-endian architectures (ie: x86), but not sure about big-endian. Luckily most machines are little-endian today, so this may never be a problem.
     // Rd = MEM[UD]. Address error or TLB error generated.
     // Credit to PCSX2.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source1.read_uword(0) + imm;
@@ -72,8 +72,8 @@ void CEeCoreInterpreter::SDR(const EeCoreInstruction inst)
     // TODO: check this, dont think its right. This should work for little-endian architectures (ie: x86), but not sure about big-endian. Luckily most machines are little-endian today, so this may never be a problem.
     // Rd = MEM[UD]. Address error or TLB error generated.
     // Credit to PCSX2.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source1.read_uword(0) + imm;
@@ -98,8 +98,8 @@ void CEeCoreInterpreter::SH(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // MEM[UH] = Rd. Address error or TLB error generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source1.read_uword(0) + imm;
@@ -115,8 +115,8 @@ void CEeCoreInterpreter::SW(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // MEM[UW] = Rd. Address error or TLB error generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source1.read_uword(0) + imm;
@@ -134,8 +134,8 @@ void CEeCoreInterpreter::SWL(const EeCoreInstruction inst)
     // TODO: check this, dont think its right. This should work for little-endian architectures (ie: x86), but not sure about big-endian. Luckily most machines are little-endian today, so this may never be a problem.
     // MEM[UW] = Rd. Address error or TLB error generated.
     // Credit to PCSX2.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source1.read_uword(0) + imm;
@@ -162,8 +162,8 @@ void CEeCoreInterpreter::SWR(const EeCoreInstruction inst)
     // TODO: check this, dont think its right. This should work for little-endian architectures (ie: x86), but not sure about big-endian. Luckily most machines are little-endian today, so this may never be a problem.
     // MEM[UW] = Rd. Address error or TLB error generated.
     // Credit to PCSX2.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source1.read_uword(0) + imm;
@@ -188,8 +188,8 @@ void CEeCoreInterpreter::SQ(const EeCoreInstruction inst)
     auto& r = core->get_resources();
 
     // MEM[UQ] = Rd. Address error or TLB error generated.
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source1.read_uword(0) + imm;
@@ -208,8 +208,8 @@ void CEeCoreInterpreter::SWC1(const EeCoreInstruction inst)
     if (!handle_cop1_usable())
         return;
 
-    auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()];   // Ft
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()];   // Ft
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
     const shword imm = inst.s_imm();
 
     uptr virtual_address = (reg_source1.read_uword(0) + imm);
@@ -228,8 +228,8 @@ void CEeCoreInterpreter::SQC2(const EeCoreInstruction inst)
     if (!handle_cop2_usable())
         return;
 
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
-    auto& reg_source2 = r.ee.vpu.vu.unit_0.vf[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()]; // "Base"
+    const auto& reg_source2 = r.ee.vpu.vu.unit_0.vf[inst.rt()];
     const shword imm = inst.s_imm();
 
     uptr virtual_address = reg_source1.read_uword(0) + imm;

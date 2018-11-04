@@ -123,6 +123,8 @@ void CEeCore::handle_interrupt_check()
     if (!cop0.status.interrupts_masked)
     {
         uword ip_cause = cop0.cause.extract_field(EeCoreCop0Register_Cause::IP);
+        cop0.cause.sync();
+
         uword im_status = cop0.status.extract_field(EeCoreCop0Register_Status::IM);
         if (ip_cause & im_status)
         {
@@ -143,6 +145,8 @@ void CEeCore::debug_print_interrupt_info()
 
     auto& cop0 = r.ee.core.cop0;
     uword ip_cause = cop0.cause.extract_field(EeCoreCop0Register_Cause::IP);
+    cop0.cause.sync();
+
     uword im_status = cop0.status.extract_field(EeCoreCop0Register_Status::IM);
 
     BOOST_LOG(Core::get_logger()) << boost::format("EeCore IntEx @ cycle = 0x%llX, PC = 0x%08X, BD = %d.")
@@ -232,6 +236,8 @@ void CEeCore::handle_count_update(const int cpi)
     if (status.count_interrupts_enabled)
     {
         auto& cause = r.ee.core.cop0.cause;
+        cause.sync();
+
         auto& compare = r.ee.core.cop0.compare;
 
         // Check the COP0.Count register against the COP0.Compare register.
@@ -241,8 +247,8 @@ void CEeCore::handle_count_update(const int cpi)
         // interrupt is raised, writing to the compare register will clear
         // the interrupt (which should be done in the ISR), so we can get
         // away with a GTE comparison.
-        auto count_value = count.read_uword();
-        auto compare_value = compare.read_uword();
+        const auto count_value = count.read_uword();
+        const auto compare_value = compare.read_uword();
         if (count_value >= compare_value)
             cause.set_irq_line(7);
     }
@@ -256,6 +262,7 @@ bool CEeCore::handle_cop0_usable()
     {
         // Coprocessor was not usable. Raise an exception.
         r.ee.core.cop0.cause.insert_field(EeCoreCop0Register_Cause::CE, 0);
+        r.ee.core.cop0.cause.sync();
         handle_exception(EeCoreException::EX_COPROCESSOR_UNUSABLE);
         return false;
     }
@@ -272,6 +279,7 @@ bool CEeCore::handle_cop1_usable()
     {
         // Coprocessor was not usable. Raise an exception.
         r.ee.core.cop0.cause.insert_field(EeCoreCop0Register_Cause::CE, 1);
+        r.ee.core.cop0.cause.sync();
         handle_exception(EeCoreException::EX_COPROCESSOR_UNUSABLE);
         return false;
     }
@@ -288,6 +296,7 @@ bool CEeCore::handle_cop2_usable()
     {
         // Coprocessor was not usable. Raise an exception.
         r.ee.core.cop0.cause.insert_field(EeCoreCop0Register_Cause::CE, 2);
+        r.ee.core.cop0.cause.sync();
         handle_exception(EeCoreException::EX_COPROCESSOR_UNUSABLE);
         return false;
     }
@@ -350,6 +359,7 @@ void CEeCore::handle_exception(const EeCoreException exception)
             uptr pc_address = pc.read_uword() - Constants::MIPS::SIZE_MIPS_INSTRUCTION;
             is_level2 ? cop0.errorepc.write_uword(pc_address) : cop0.epc.write_uword(pc_address);
             cop0.cause.insert_field(is_level2 ? EeCoreCop0Register_Cause::BD2 : EeCoreCop0Register_Cause::BD, 1);
+            cop0.cause.sync();
             bdelay.stop_branch(); // Reset branch delay slot.
         }
         else
@@ -357,12 +367,14 @@ void CEeCore::handle_exception(const EeCoreException exception)
             uptr pc_address = pc.read_uword();
             is_level2 ? cop0.errorepc.write_uword(pc_address) : cop0.epc.write_uword(pc_address);
             cop0.cause.insert_field(is_level2 ? EeCoreCop0Register_Cause::BD2 : EeCoreCop0Register_Cause::BD, 0);
+            cop0.cause.sync();
         }
     };
 
     // Set the error level.
     cop0.status.insert_field(EeCoreCop0Register_Status::ERL, is_level2 ? 1 : 0);
     cop0.cause.insert_field(is_level2 ? EeCoreCop0Register_Cause::EXC2 : EeCoreCop0Register_Cause::EXCCODE, exccode);
+    cop0.cause.sync();
 
     // For Reset and NMI's, handle these through specific process.
     if (exception == EeCoreException::EX_RESET || exception == EeCoreException::EX_NMI)

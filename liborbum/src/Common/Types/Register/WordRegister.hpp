@@ -14,15 +14,15 @@ public:
     virtual void initialize() = 0;
 
     /// Read/write functions to access the register, with subclassed functionality.
-    virtual ubyte read_ubyte(const size_t offset) = 0;
+    virtual ubyte read_ubyte(const size_t offset) const = 0;
     virtual void write_ubyte(const size_t offset, const ubyte value) = 0;
-    virtual uhword read_uhword(const size_t offset) = 0;
+    virtual uhword read_uhword(const size_t offset) const = 0;
     virtual void write_uhword(const size_t offset, const uhword value) = 0;
-    virtual uword read_uword() = 0;
+    virtual uword read_uword() const = 0;
     virtual void write_uword(const uword value) = 0;
 
     /// Read/write floats - wrappers around read/write uword.
-    f32 read_float()
+    f32 read_float() const
     {
         const uword raw = read_uword();
         return *reinterpret_cast<const f32*>(&raw);
@@ -34,7 +34,7 @@ public:
     }
 
     /// Bitfield extraction/insertion.
-    uword extract_field(const Bitfield field)
+    uword extract_field(const Bitfield field) const
     {
         return field.extract_from(read_uword());
     }

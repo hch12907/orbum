@@ -12,8 +12,8 @@ void CEeCoreInterpreter::ADD_S(const EeCoreInstruction inst)
     if (!handle_cop1_usable())
         return;
 
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
-    auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
     auto& reg_dest = r.ee.core.fpu.fpr[inst.shamt()]; // Fd
     auto& csr = r.ee.core.fpu.csr;
 
@@ -35,8 +35,8 @@ void CEeCoreInterpreter::ADDA_S(const EeCoreInstruction inst)
     if (!handle_cop1_usable())
         return;
 
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
-    auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
     auto& reg_dest = r.ee.core.fpu.acc;               // ACC
     auto& csr = r.ee.core.fpu.csr;
 
@@ -59,9 +59,9 @@ void CEeCoreInterpreter::MADD_S(const EeCoreInstruction inst)
         return;
 
     // TODO: Check if this needs to be done in 2 stages (with checks), where stage 1 does multiply, stage 2 does addition. Old PCSX2 clamps/rounds all values before doing anything and only checks conditions at the end.
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
-    auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
-    auto& reg_source3 = r.ee.core.fpu.acc;            // ACC
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
+    const auto& reg_source3 = r.ee.core.fpu.acc;            // ACC
     auto& reg_dest = r.ee.core.fpu.fpr[inst.shamt()]; // Fd
     auto& csr = r.ee.core.fpu.csr;
 
@@ -84,8 +84,8 @@ void CEeCoreInterpreter::MADDA_S(const EeCoreInstruction inst)
         return;
 
     // TODO: Check if this needs to be done in 2 stages (with checks), where stage 1 does multiply, stage 2 does addition. Old PCSX2 clamps/rounds all values before doing anything and only checks conditions at the end.
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
-    auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
     auto& reg_dest = r.ee.core.fpu.acc;               // ACC
     auto& csr = r.ee.core.fpu.csr;
 
@@ -107,8 +107,8 @@ void CEeCoreInterpreter::MUL_S(const EeCoreInstruction inst)
     if (!handle_cop1_usable())
         return;
 
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
-    auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
     auto& reg_dest = r.ee.core.fpu.fpr[inst.shamt()]; // Fd
     auto& csr = r.ee.core.fpu.csr;
 
@@ -130,8 +130,8 @@ void CEeCoreInterpreter::MULA_S(const EeCoreInstruction inst)
     if (!handle_cop1_usable())
         return;
 
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
-    auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
     auto& reg_dest = r.ee.core.fpu.acc;               // ACC
     auto& csr = r.ee.core.fpu.csr;
 
@@ -153,8 +153,8 @@ void CEeCoreInterpreter::DIV_S(const EeCoreInstruction inst)
     if (!handle_cop1_usable())
         return;
 
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
-    auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
     auto& reg_dest = r.ee.core.fpu.fpr[inst.shamt()]; // Fd
     auto& csr = r.ee.core.fpu.csr;
 
@@ -193,9 +193,9 @@ void CEeCoreInterpreter::MSUB_S(const EeCoreInstruction inst)
     if (!handle_cop1_usable())
         return;
 
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
-    auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
-    auto& reg_source3 = r.ee.core.fpu.acc;            // ACC
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
+    const auto& reg_source3 = r.ee.core.fpu.acc;            // ACC
     auto& reg_dest = r.ee.core.fpu.fpr[inst.shamt()]; // Fd
     auto& csr = r.ee.core.fpu.csr;
 
@@ -218,8 +218,8 @@ void CEeCoreInterpreter::MSUBA_S(const EeCoreInstruction inst)
     if (!handle_cop1_usable())
         return;
 
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
-    auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
     auto& reg_dest = r.ee.core.fpu.acc;               // ACC
     auto& csr = r.ee.core.fpu.csr;
 
@@ -241,8 +241,8 @@ void CEeCoreInterpreter::SUB_S(const EeCoreInstruction inst)
     if (!handle_cop1_usable())
         return;
 
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
-    auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
     auto& reg_dest = r.ee.core.fpu.fpr[inst.shamt()]; // Fd
     auto& csr = r.ee.core.fpu.csr;
 
@@ -264,8 +264,8 @@ void CEeCoreInterpreter::SUBA_S(const EeCoreInstruction inst)
     if (!handle_cop1_usable())
         return;
 
-    auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
-    auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
+    const auto& reg_source1 = r.ee.core.fpu.fpr[inst.rd()]; // Fs
+    const auto& reg_source2 = r.ee.core.fpu.fpr[inst.rt()]; // Ft
     auto& reg_dest = r.ee.core.fpu.acc;               // ACC
     auto& csr = r.ee.core.fpu.csr;
 

@@ -9,7 +9,7 @@ void CEeCoreInterpreter::PCPYH(const EeCoreInstruction inst)
 
     // Rd = COPY_HW(Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
 
     uhword value0 = reg_source1.read_uhword(0);
     uhword value4 = reg_source1.read_uhword(4);
@@ -30,8 +30,8 @@ void CEeCoreInterpreter::PCPYLD(const EeCoreInstruction inst)
 
     // Rd = COPY_DW(Rs, Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     udword value0 = reg_source2.read_udword(0);
     udword value1 = reg_source1.read_udword(0);
@@ -46,8 +46,8 @@ void CEeCoreInterpreter::PCPYUD(const EeCoreInstruction inst)
 
     // Rd = COPY_DW(Rs, Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     udword value0 = reg_source1.read_udword(1);
     udword value1 = reg_source2.read_udword(1);
@@ -62,7 +62,7 @@ void CEeCoreInterpreter::PEXCH(const EeCoreInstruction inst)
 
     // Rd = COPY_HW(Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
 
     uhword value0 = reg_source1.read_uhword(0);
     uhword value1 = reg_source1.read_uhword(2);
@@ -89,7 +89,7 @@ void CEeCoreInterpreter::PEXCW(const EeCoreInstruction inst)
 
     // Rd = COPY_W(Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
 
     uword value0 = reg_source1.read_uword(0);
     uword value1 = reg_source1.read_uword(2);
@@ -108,7 +108,7 @@ void CEeCoreInterpreter::PEXEH(const EeCoreInstruction inst)
 
     // Rd = COPY_HW(Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
 
     uhword value0 = reg_source1.read_uhword(2);
     uhword value1 = reg_source1.read_uhword(1);
@@ -135,7 +135,7 @@ void CEeCoreInterpreter::PEXEW(const EeCoreInstruction inst)
 
     // Rd = COPY_W(Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
 
     uword value0 = reg_source1.read_uword(2);
     uword value1 = reg_source1.read_uword(1);
@@ -154,8 +154,8 @@ void CEeCoreInterpreter::PEXTLB(const EeCoreInstruction inst)
 
     // Rd = COPY_B(Rs, Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     ubyte value0 = reg_source2.read_ubyte(0);
     ubyte value1 = reg_source1.read_ubyte(0);
@@ -198,8 +198,8 @@ void CEeCoreInterpreter::PEXTLH(const EeCoreInstruction inst)
 
     // Rd = COPY_HW(Rs, Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     uhword value0 = reg_source2.read_uhword(0);
     uhword value1 = reg_source1.read_uhword(0);
@@ -226,8 +226,8 @@ void CEeCoreInterpreter::PEXTLW(const EeCoreInstruction inst)
 
     // Rd = COPY_W(Rs, Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     uword value0 = reg_source2.read_uword(0);
     uword value1 = reg_source1.read_uword(0);
@@ -246,8 +246,8 @@ void CEeCoreInterpreter::PEXTUB(const EeCoreInstruction inst)
 
     // Rd = COPY_B(Rs, Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     ubyte value0 = reg_source2.read_ubyte(8);
     ubyte value1 = reg_source1.read_ubyte(8);
@@ -290,8 +290,8 @@ void CEeCoreInterpreter::PEXTUH(const EeCoreInstruction inst)
 
     // Rd = COPY_HW(Rs, Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     uhword value0 = reg_source2.read_uhword(4);
     uhword value1 = reg_source1.read_uhword(4);
@@ -318,8 +318,8 @@ void CEeCoreInterpreter::PEXTUW(const EeCoreInstruction inst)
 
     // Rd = COPY_HW(Rs, Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     uword value0 = reg_source2.read_uword(2);
     uword value1 = reg_source1.read_uword(2);
@@ -338,8 +338,8 @@ void CEeCoreInterpreter::PINTEH(const EeCoreInstruction inst)
 
     // Rd = COPY_HW(Rs, Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     uhword value0 = reg_source2.read_uhword(0);
     uhword value1 = reg_source1.read_uhword(0);
@@ -366,8 +366,8 @@ void CEeCoreInterpreter::PINTH(const EeCoreInstruction inst)
 
     // Rd = COPY_HW(Rs, Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     uhword value0 = reg_source2.read_uhword(0);
     uhword value1 = reg_source1.read_uhword(4);
@@ -394,8 +394,8 @@ void CEeCoreInterpreter::PPACB(const EeCoreInstruction inst)
 
     // Rd = COPY_B(Rs, Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     ubyte value0 = reg_source2.read_ubyte(0);
     ubyte value1 = reg_source2.read_ubyte(2);
@@ -438,8 +438,8 @@ void CEeCoreInterpreter::PPACH(const EeCoreInstruction inst)
 
     // Rd = COPY_HW(Rs, Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     uhword value0 = reg_source2.read_uhword(0);
     uhword value1 = reg_source2.read_uhword(2);
@@ -466,8 +466,8 @@ void CEeCoreInterpreter::PPACW(const EeCoreInstruction inst)
 
     // Rd = COPY_W(Rs, Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
-    auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rs()];
+    const auto& reg_source2 = r.ee.core.r5900.gpr[inst.rt()];
 
     uword value0 = reg_source2.read_uword(0);
     uword value1 = reg_source2.read_uword(2);
@@ -486,7 +486,7 @@ void CEeCoreInterpreter::PREVH(const EeCoreInstruction inst)
 
     // Rd = COPY_HW(Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
 
     uhword value0 = reg_source1.read_uhword(3);
     uhword value1 = reg_source1.read_uhword(2);
@@ -513,7 +513,7 @@ void CEeCoreInterpreter::PROT3W(const EeCoreInstruction inst)
 
     // Rd = COPY_W(Rt), No exceptions.
     auto& reg_dest = r.ee.core.r5900.gpr[inst.rd()];
-    auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
+    const auto& reg_source1 = r.ee.core.r5900.gpr[inst.rt()];
 
     uword value0 = reg_source1.read_uword(1);
     uword value1 = reg_source1.read_uword(2);

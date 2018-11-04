@@ -16,7 +16,7 @@ public:
         hword_register->initialize();
     }
 
-    ubyte read_ubyte(const size_t offset) override
+    ubyte read_ubyte(const size_t offset) const override
     {
         throw std::runtime_error("Only Word R/W wrapper calls to HwordRegister are allowed.");
     }
@@ -26,7 +26,7 @@ public:
         throw std::runtime_error("Only Word R/W wrapper calls to HwordRegister are allowed.");
     }
 
-    uhword read_uhword(const size_t offset) override
+    uhword read_uhword(const size_t offset) const override
     {
         throw std::runtime_error("Only Word R/W wrapper calls to HwordRegister are allowed.");
     }
@@ -36,7 +36,7 @@ public:
         throw std::runtime_error("Only Word R/W wrapper calls to HwordRegister are allowed.");
     }
 
-    uword read_uword() override
+    uword read_uword() const override
     {
         return static_cast<uword>(hword_register->read_uhword());
     }

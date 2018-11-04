@@ -25,7 +25,7 @@ public:
     }
 
     /// Read/write functions to access the register.
-    ubyte read_ubyte(const size_t offset) override
+    ubyte read_ubyte(const size_t offset) const override
     {
 #if defined(BUILD_DEBUG)
         if (offset >= NUMBER_BYTES_IN_HWORD)
@@ -46,7 +46,7 @@ public:
             b[offset] = value;
     }
 
-    uhword read_uhword() override
+    uhword read_uhword() const override
     {
         return h;
     }
