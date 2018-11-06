@@ -211,27 +211,28 @@ int CGif::time_step(const int ticks_available)
             }
         }
 
-        // If there are requests in queue for the PATHs, set the P*Q registers to 1.
-        stat.insert_field(GifRegister_Stat::P1Q, r.fifo_gif_path1.has_read_available(NUMBER_BYTES_IN_QWORD));
-        stat.insert_field(GifRegister_Stat::P2Q, r.fifo_gif_path2.has_read_available(NUMBER_BYTES_IN_QWORD));
-        stat.insert_field(GifRegister_Stat::P3Q, r.fifo_gif_path3.has_read_available(NUMBER_BYTES_IN_QWORD));
+        // TODO: remove this hack.
+        // Hack: if there are active transfers, force FQC to 16, otherwise 0.
+        // This is because we do not have a reliable way of tracking the FIFO usage
+        if (fifo->has_read_available(NUMBER_BYTES_IN_QWORD))
+        {
+            BOOST_LOG(Core::get_logger()) << "GIF: FQC set to 16";
+            stat.insert_field(GifRegister_Stat::FQC, 16);
+        }
+        else
+        {
+            stat.insert_field(GifRegister_Stat::FQC, 0);
+        }
 
         // Do not process other paths if at least one path was successfully processed.
         if (cycles_consumed)
             break;
     }
 
-    // TODO: remove this hack.
-    // Hack: if there are active transfers, force FQC to 16, otherwise 0.
-    // This is because we do not have a reliable way of tracking the FIFO usage
-    if (stat.extract_field(GifRegister_Stat::APATH) != 0)
-    {
-        stat.insert_field(GifRegister_Stat::FQC, 16);
-    }
-    else
-    {
-        stat.insert_field(GifRegister_Stat::FQC, 0);
-    }
+    // If there are requests in queue for the PATHs, set the P*Q registers to 1.
+    stat.insert_field(GifRegister_Stat::P1Q, r.fifo_gif_path1.has_read_available(NUMBER_BYTES_IN_QWORD));
+    stat.insert_field(GifRegister_Stat::P2Q, r.fifo_gif_path2.has_read_available(NUMBER_BYTES_IN_QWORD));
+    stat.insert_field(GifRegister_Stat::P3Q, r.fifo_gif_path3.has_read_available(NUMBER_BYTES_IN_QWORD));
 
     // At least 1 cycle is consumed always if no paths had data available for processing.
     return std::max(cycles_consumed, 1);
