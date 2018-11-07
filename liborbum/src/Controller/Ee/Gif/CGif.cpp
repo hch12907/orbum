@@ -89,8 +89,8 @@ int CGif::time_step(const int ticks_available)
             if (!fifo->has_read_available(NUMBER_BYTES_IN_QWORD))
                 continue;
 
-            // P3TAG holding something means that PATH3 was previously interrupted, and needs to recontinue
-            if (r.ee.gif.p3tag.read_uword())
+            // IP3 set to 1 indicates that PATH3 was previously interrupted, and needs to recontinue
+            if (r.ee.gif.stat.extract_field(GifRegister_Stat::IP3))
             {
                 // Note: check endianness?
                 uqword p3data;
@@ -157,6 +157,8 @@ int CGif::time_step(const int ticks_available)
                 uqword data;
                 fifo->read(reinterpret_cast<ubyte*>(&data), NUMBER_BYTES_IN_QWORD);
 
+                cycles_consumed = handle_data_image(data);
+
                 // In intermittent mode, the GIF checks for other requests from PATH1 & PATH2,
                 // and priotises them over PATH3 if there are.
                 // The check is done every 8 qwords (or 1 slice).
@@ -185,14 +187,26 @@ int CGif::time_step(const int ticks_available)
                     }
                 }
 
-                cycles_consumed = handle_data_image(data);
-
                 break;
             }
             default:
             {
                 throw std::runtime_error("Unknown GIF data processing method");
             }
+            }
+
+            // TODO: remove this hack.
+            // Hack: if there are active transfers, force FQC to 16, otherwise 0.
+            // This is because we do not have a reliable way of tracking the FIFO usage
+            if (fifo->has_read_available(NUMBER_BYTES_IN_QWORD))
+            {
+                BOOST_LOG(Core::get_logger()) << "GIF: FQC set to 16";
+                stat.insert_field(GifRegister_Stat::FQC, 16);
+            }
+            else
+            {
+                BOOST_LOG(Core::get_logger()) << "GIF: FQC set to 0";
+                stat.insert_field(GifRegister_Stat::FQC, 0);
             }
         }
 
@@ -209,19 +223,6 @@ int CGif::time_step(const int ticks_available)
                 stat.insert_field(GifRegister_Stat::APATH, 0);
                 break;
             }
-        }
-
-        // TODO: remove this hack.
-        // Hack: if there are active transfers, force FQC to 16, otherwise 0.
-        // This is because we do not have a reliable way of tracking the FIFO usage
-        if (fifo->has_read_available(NUMBER_BYTES_IN_QWORD))
-        {
-            BOOST_LOG(Core::get_logger()) << "GIF: FQC set to 16";
-            stat.insert_field(GifRegister_Stat::FQC, 16);
-        }
-        else
-        {
-            stat.insert_field(GifRegister_Stat::FQC, 0);
         }
 
         // Do not process other paths if at least one path was successfully processed.
