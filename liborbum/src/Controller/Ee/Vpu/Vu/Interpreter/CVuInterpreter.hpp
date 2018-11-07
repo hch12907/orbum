@@ -383,8 +383,8 @@ public:
             &CVuInterpreter::XITOP};
 
 private:
-    bool check_data_hazard(VuUnit_Base* unit, const VuInstructionDecoder& decoder) const;
+    bool check_data_hazard(VuUnit_Base* unit, const VuInstructionDecoder& upper_decoder, const VuInstructionDecoder& lower_decoder) const;
 
-    int execute_upper_instruction(VuUnit_Base* unit, VuInstruction inst, MipsInstructionInfo info, const VuInstructionDecoder& decoder);
-    int execute_lower_instruction(VuUnit_Base* unit, VuInstruction inst, MipsInstructionInfo info, const VuInstructionDecoder& decoder);
+    int execute_upper_instruction(VuUnit_Base* unit, const VuInstructionDecoder& decoder, bool handle_data_hazard);
+    int execute_lower_instruction(VuUnit_Base* unit, const VuInstructionDecoder& decoder, bool handle_data_hazard);
 };

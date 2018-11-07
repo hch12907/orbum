@@ -1,271 +1,349 @@
 #include "Resources/Ee/Vpu/Vu/VuInstructionDecoder.hpp"
 
-/// Each VuInstruction specifies 3 registers (one for the destination reg
-/// and others for source) and uses 4 at most (eg MADD/MSUB). In this table index 0
-/// stores the destination reg, while index 1, 2 & 3 stores the source reg(s).
-/// If the destination bitfield is set to nullopt, then it is assumed that the
-/// instruction uses special registers such as P, Q or ACC.
-VuDecodedInst VU_DECODE_TABLE[Constants::EE::VPU::VU::NUMBER_VU_INSTRUCTIONS]{
-    //              DESTINATION           SOURCE (1)           SOURCE (2)        SOURCE (3)             FIELDS
+VuInstructionType VU_INSTRUCTION_DECODE_TABLE[Constants::EE::VPU::VU::NUMBER_VU_INSTRUCTIONS] {
     // Upper Instructions
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),             // ABS
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Dest),        // ADD
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuSpecialRegs::I, std::nullopt, VuDecodedInst::Dest),         // ADDi
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuSpecialRegs::Q, std::nullopt, VuDecodedInst::Dest),         // ADDq
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // ADDbc_0
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // ADDbc_1
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // ADDbc_2
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // ADDbc_3
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Dest),       // ADDA
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuSpecialRegs::I, std::nullopt, VuDecodedInst::Dest),        // ADDAi
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuSpecialRegs::Q, std::nullopt, VuDecodedInst::Dest),        // ADDAq
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),         // ADDAbc_0
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),         // ADDAbc_1
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),         // ADDAbc_2
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),         // ADDAbc_3
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Dest),        // SUB
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuSpecialRegs::I, std::nullopt, VuDecodedInst::Dest),         // SUBi
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuSpecialRegs::Q, std::nullopt, VuDecodedInst::Dest),         // SUBq
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // SUBbc_0
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // SUBbc_1
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // SUBbc_2
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // SUBbc_3
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Dest),       // SUBA
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuSpecialRegs::I, std::nullopt, VuDecodedInst::Dest),        // SUBAi
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuSpecialRegs::Q, std::nullopt, VuDecodedInst::Dest),        // SUBAq
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),         // SUBAbc_0
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),         // SUBAbc_1
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),         // SUBAbc_2
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),         // SUBAbc_3
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Dest),        // MUL
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuSpecialRegs::I, std::nullopt, VuDecodedInst::Dest),         // MULi
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuSpecialRegs::Q, std::nullopt, VuDecodedInst::Dest),         // MULq
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // MULbc_0
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // MULbc_1
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // MULbc_2
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // MULbc_3
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Dest),       // MULA
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuSpecialRegs::I, std::nullopt, VuDecodedInst::Dest),        // MULAi
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuSpecialRegs::Q, std::nullopt, VuDecodedInst::Dest),        // MULAq
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),         // MULAbc_0
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),         // MULAbc_1
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),         // MULAbc_2
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),         // MULAbc_3
-    VuDecodedInst(VuInstruction::FD, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Dest),  // MADD
-    VuDecodedInst(VuInstruction::FD, VuSpecialRegs::ACC, VuInstruction::FS, VuSpecialRegs::I, VuDecodedInst::Dest),   // MADDi
-    VuDecodedInst(VuInstruction::FD, VuSpecialRegs::ACC, VuInstruction::FS, VuSpecialRegs::Q, VuDecodedInst::Dest),   // MADDq
-    VuDecodedInst(VuInstruction::FD, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Bc),    // MADDbc_0
-    VuDecodedInst(VuInstruction::FD, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Bc),    // MADDbc_1
-    VuDecodedInst(VuInstruction::FD, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Bc),    // MADDbc_2
-    VuDecodedInst(VuInstruction::FD, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Bc),    // MADDbc_3
-    VuDecodedInst(VuSpecialRegs::ACC, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Dest), // MADDA
-    VuDecodedInst(VuSpecialRegs::ACC, VuSpecialRegs::ACC, VuInstruction::FS, VuSpecialRegs::I, VuDecodedInst::Dest),  // MADDAi
-    VuDecodedInst(VuSpecialRegs::ACC, VuSpecialRegs::ACC, VuInstruction::FS, VuSpecialRegs::Q, VuDecodedInst::Dest),  // MADDAq
-    VuDecodedInst(VuSpecialRegs::ACC, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Bc),   // MADDAbc_0
-    VuDecodedInst(VuSpecialRegs::ACC, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Bc),   // MADDAbc_1
-    VuDecodedInst(VuSpecialRegs::ACC, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Bc),   // MADDAbc_2
-    VuDecodedInst(VuSpecialRegs::ACC, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Bc),   // MADDAbc_3
-    VuDecodedInst(VuInstruction::FD, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Dest),  // MSUB
-    VuDecodedInst(VuInstruction::FD, VuSpecialRegs::ACC, VuInstruction::FS, VuSpecialRegs::I, VuDecodedInst::Dest),   // MSUBi
-    VuDecodedInst(VuInstruction::FD, VuSpecialRegs::ACC, VuInstruction::FS, VuSpecialRegs::Q, VuDecodedInst::Dest),   // MSUBq
-    VuDecodedInst(VuInstruction::FD, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Bc),    // MSUBbc_0
-    VuDecodedInst(VuInstruction::FD, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Bc),    // MSUBbc_1
-    VuDecodedInst(VuInstruction::FD, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Bc),    // MSUBbc_2
-    VuDecodedInst(VuInstruction::FD, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Bc),    // MSUBbc_3
-    VuDecodedInst(VuSpecialRegs::ACC, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Dest), // MSUBA
-    VuDecodedInst(VuSpecialRegs::ACC, VuSpecialRegs::ACC, VuInstruction::FS, VuSpecialRegs::I, VuDecodedInst::Dest),  // MSUBAi
-    VuDecodedInst(VuSpecialRegs::ACC, VuSpecialRegs::ACC, VuInstruction::FS, VuSpecialRegs::Q, VuDecodedInst::Dest),  // MSUBAq
-    VuDecodedInst(VuSpecialRegs::ACC, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Bc),   // MSUBAbc_0
-    VuDecodedInst(VuSpecialRegs::ACC, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Bc),   // MSUBAbc_1
-    VuDecodedInst(VuSpecialRegs::ACC, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Bc),   // MSUBAbc_2
-    VuDecodedInst(VuSpecialRegs::ACC, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Bc),   // MSUBAbc_3
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Dest),        // MAX
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuSpecialRegs::I, std::nullopt, VuDecodedInst::Dest),         // MAXi
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // MAXbc_0
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // MAXbc_1
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // MAXbc_2
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // MAXbc_3
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Dest),        // MINI
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuSpecialRegs::I, std::nullopt, VuDecodedInst::Dest),         // MINIi
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // MINIbc_0
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // MINIbc_1
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // MINIbc_2
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Bc),          // MINIbc_3
-    VuDecodedInst(VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Dest),       // OPMULA
-    VuDecodedInst(VuSpecialRegs::ACC, VuSpecialRegs::ACC, VuInstruction::FS, VuInstruction::FT, VuDecodedInst::Dest), // OPMSUB
-    VuDecodedInst(std::nullopt, std::nullopt, std::nullopt, std::nullopt, VuDecodedInst::Dest),                       // NOP
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),             // FTOI0
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),             // FTOI4
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),             // FTOI12
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),             // FTOI15
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),             // ITOF0
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),             // ITOF4
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),             // ITOF12
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),             // ITOF15
-    VuDecodedInst(VuSpecialRegs::CLIP, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Dest),      // CLIP
-
-    // Lower Instructions
-    VuDecodedInst(VuSpecialRegs::Q, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::FsfFtf), // DIV
-    VuDecodedInst(VuSpecialRegs::Q, VuInstruction::FT, std::nullopt, std::nullopt, VuDecodedInst::FsfFtf),      // SQRT
-    VuDecodedInst(VuSpecialRegs::Q, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::FsfFtf), // RSQRT
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Int),   // IADD
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Int),        // IADDI
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Int),        // IADDIU
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Int),   // IAND
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Int),   // IOR
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, VuInstruction::FT, std::nullopt, VuDecodedInst::Int),   // ISUB
-    VuDecodedInst(VuInstruction::FD, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Int),        // ISUBI
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),       // MOVE
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),       // MFIR
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::FsfFtf),     // MTIR
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),       // MR32
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),       // LQ
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),       // LQD
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),       // LQI
-    VuDecodedInst(VuInstruction::FS, VuInstruction::FT, std::nullopt, std::nullopt, VuDecodedInst::Dest),       // SQ
-    VuDecodedInst(VuInstruction::FS, VuInstruction::FT, std::nullopt, std::nullopt, VuDecodedInst::Dest),       // SQD
-    VuDecodedInst(VuInstruction::FS, VuInstruction::FT, std::nullopt, std::nullopt, VuDecodedInst::Dest),       // SQI
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Int),        // ILW
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Int),        // ISW
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Int),        // ILWR
-    VuDecodedInst(VuInstruction::FT, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Int),        // ISWR
-    VuDecodedInst(VuSpecialRegs::R, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::FsfFtf),      // RINIT
-    VuDecodedInst(VuInstruction::FT, VuSpecialRegs::R, std::nullopt, std::nullopt, VuDecodedInst::Dest),        // RGET
-    VuDecodedInst(VuInstruction::FT, VuSpecialRegs::R, std::nullopt, std::nullopt, VuDecodedInst::Dest),        // RNEXT
-    VuDecodedInst(VuSpecialRegs::R, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::FsfFtf),      // RXOR
-    VuDecodedInst(std::nullopt, std::nullopt, std::nullopt, std::nullopt, VuDecodedInst::Dest),                 // WAITQ
-    VuDecodedInst(VuInstruction::FT, VuSpecialRegs::SF, std::nullopt, std::nullopt, VuDecodedInst::Int),        // FSAND
-    VuDecodedInst(VuInstruction::FT, VuSpecialRegs::SF, std::nullopt, std::nullopt, VuDecodedInst::Int),        // FSEQ
-    VuDecodedInst(VuInstruction::FT, VuSpecialRegs::SF, std::nullopt, std::nullopt, VuDecodedInst::Int),        // FSOR
-    VuDecodedInst(VuSpecialRegs::SF, std::nullopt, std::nullopt, std::nullopt, VuDecodedInst::Int),             // FSSET
-    VuDecodedInst(VuInstruction::FT, VuSpecialRegs::MAC, VuInstruction::FS, std::nullopt, VuDecodedInst::Int),  // FMAND
-    VuDecodedInst(VuInstruction::FT, VuSpecialRegs::MAC, VuInstruction::FS, std::nullopt, VuDecodedInst::Int),  // FMEQ
-    VuDecodedInst(VuInstruction::FT, VuSpecialRegs::MAC, VuInstruction::FS, std::nullopt, VuDecodedInst::Int),  // FMOR
-    VuDecodedInst(VuInstruction::FT, VuSpecialRegs::CLIP, std::nullopt, std::nullopt, VuDecodedInst::Int),      // FCAND
-    VuDecodedInst(VuInstruction::FT, VuSpecialRegs::CLIP, std::nullopt, std::nullopt, VuDecodedInst::Int),      // FCEQ
-    VuDecodedInst(VuInstruction::FT, VuSpecialRegs::CLIP, std::nullopt, std::nullopt, VuDecodedInst::Int),      // FCOR
-    VuDecodedInst(VuSpecialRegs::CLIP, std::nullopt, std::nullopt, std::nullopt, VuDecodedInst::Int),           // FCSET
-    VuDecodedInst(VuInstruction::FT, VuSpecialRegs::CLIP, std::nullopt, std::nullopt, VuDecodedInst::Int),      // FCGET
-    VuDecodedInst(VuSpecialRegs::PC, VuInstruction::FT, VuInstruction::FS, std::nullopt, VuDecodedInst::Int),   // IBEQ
-    VuDecodedInst(VuSpecialRegs::PC, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Int),        // IBGEZ
-    VuDecodedInst(VuSpecialRegs::PC, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Int),        // IBGTZ
-    VuDecodedInst(VuSpecialRegs::PC, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Int),        // IBLEZ
-    VuDecodedInst(VuSpecialRegs::PC, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Int),        // IBLTZ
-    VuDecodedInst(VuSpecialRegs::PC, VuInstruction::FT, VuInstruction::FS, std::nullopt, VuDecodedInst::Int),   // IBNE
-    VuDecodedInst(VuSpecialRegs::PC, std::nullopt, std::nullopt, std::nullopt, VuDecodedInst::Int),             // B
-    VuDecodedInst(VuInstruction::FT, std::nullopt, std::nullopt, std::nullopt, VuDecodedInst::Int),             // BAL
-    VuDecodedInst(VuSpecialRegs::PC, std::nullopt, std::nullopt, std::nullopt, VuDecodedInst::Int),             // J
-    VuDecodedInst(VuInstruction::FT, std::nullopt, std::nullopt, std::nullopt, VuDecodedInst::Int),             // JALR
-    VuDecodedInst(VuInstruction::FT, VuSpecialRegs::P, std::nullopt, std::nullopt, VuDecodedInst::Dest),        // MFP
-    VuDecodedInst(std::nullopt, std::nullopt, std::nullopt, std::nullopt, VuDecodedInst::Dest),                 // WAITP
-    VuDecodedInst(VuSpecialRegs::P, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),        // ESADD
-    VuDecodedInst(VuSpecialRegs::P, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),        // ERSADD
-    VuDecodedInst(VuSpecialRegs::P, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),        // ELENG
-    VuDecodedInst(VuSpecialRegs::P, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),        // ERLENG
-    VuDecodedInst(VuSpecialRegs::P, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),        // EATANxy
-    VuDecodedInst(VuSpecialRegs::P, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),        // EATANxz
-    VuDecodedInst(VuSpecialRegs::P, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Dest),        // ESUM
-    VuDecodedInst(VuSpecialRegs::P, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::FsfFtf),      // ERCPR
-    VuDecodedInst(VuSpecialRegs::P, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::FsfFtf),      // ESQRT
-    VuDecodedInst(VuSpecialRegs::P, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::FsfFtf),      // ERSQRT
-    VuDecodedInst(VuSpecialRegs::P, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::FsfFtf),      // ESIN
-    VuDecodedInst(VuSpecialRegs::P, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::FsfFtf),      // EATAN
-    VuDecodedInst(VuSpecialRegs::P, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::FsfFtf),      // EEXP
-    VuDecodedInst(std::nullopt, VuInstruction::FS, std::nullopt, std::nullopt, VuDecodedInst::Int),             // XGKICK
-    VuDecodedInst(VuInstruction::FT, std::nullopt, std::nullopt, std::nullopt, VuDecodedInst::Int),             // XTOP
-    VuDecodedInst(VuInstruction::FT, std::nullopt, std::nullopt, std::nullopt, VuDecodedInst::Int),             // XITOP
+    VuInstructionType::UpperType3,         // ABS
+    VuInstructionType::UpperType1,         // ADD
+    VuInstructionType::UpperType1,         // ADDi
+    VuInstructionType::UpperType1,         // ADDq
+    VuInstructionType::UpperType0,         // ADDbc_0
+    VuInstructionType::UpperType0,         // ADDbc_1
+    VuInstructionType::UpperType0,         // ADDbc_2
+    VuInstructionType::UpperType0,         // ADDbc_3
+    VuInstructionType::UpperType3_ACC,     // ADDA
+    VuInstructionType::UpperType3_ACC,     // ADDAi
+    VuInstructionType::UpperType3_ACC,     // ADDAq
+    VuInstructionType::UpperType2_ACC,     // ADDAbc_0
+    VuInstructionType::UpperType2_ACC,     // ADDAbc_1
+    VuInstructionType::UpperType2_ACC,     // ADDAbc_2
+    VuInstructionType::UpperType2_ACC,     // ADDAbc_3
+    VuInstructionType::UpperType1,         // SUB
+    VuInstructionType::UpperType1,         // SUBi
+    VuInstructionType::UpperType1,         // SUBq
+    VuInstructionType::UpperType0,         // SUBbc_0
+    VuInstructionType::UpperType0,         // SUBbc_1
+    VuInstructionType::UpperType0,         // SUBbc_2
+    VuInstructionType::UpperType0,         // SUBbc_3
+    VuInstructionType::UpperType3_ACC,     // SUBA
+    VuInstructionType::UpperType3_ACC,     // SUBAi
+    VuInstructionType::UpperType3_ACC,     // SUBAq
+    VuInstructionType::UpperType2_ACC,     // SUBAbc_0
+    VuInstructionType::UpperType2_ACC,     // SUBAbc_1
+    VuInstructionType::UpperType2_ACC,     // SUBAbc_2
+    VuInstructionType::UpperType2_ACC,     // SUBAbc_3
+    VuInstructionType::UpperType1,         // MUL
+    VuInstructionType::UpperType1,         // MULi
+    VuInstructionType::UpperType1,         // MULq
+    VuInstructionType::UpperType0,         // MULbc_0
+    VuInstructionType::UpperType0,         // MULbc_1
+    VuInstructionType::UpperType0,         // MULbc_2
+    VuInstructionType::UpperType0,         // MULbc_3
+    VuInstructionType::UpperType3_ACC,     // MULA
+    VuInstructionType::UpperType3_ACC,     // MULAi
+    VuInstructionType::UpperType3_ACC,     // MULAq
+    VuInstructionType::UpperType2_ACC,     // MULAbc_0
+    VuInstructionType::UpperType2_ACC,     // MULAbc_1
+    VuInstructionType::UpperType2_ACC,     // MULAbc_2
+    VuInstructionType::UpperType2_ACC,     // MULAbc_3
+    VuInstructionType::UpperType1,         // MADD
+    VuInstructionType::UpperType1,         // MADDi
+    VuInstructionType::UpperType1,         // MADDq
+    VuInstructionType::UpperType0,         // MADDbc_0
+    VuInstructionType::UpperType0,         // MADDbc_1
+    VuInstructionType::UpperType0,         // MADDbc_2
+    VuInstructionType::UpperType0,         // MADDbc_3
+    VuInstructionType::UpperType3_ACC,     // MADDA
+    VuInstructionType::UpperType3_ACC,     // MADDAi
+    VuInstructionType::UpperType3_ACC,     // MADDAq
+    VuInstructionType::UpperType2_ACC,     // MADDAbc_0
+    VuInstructionType::UpperType2_ACC,     // MADDAbc_1
+    VuInstructionType::UpperType2_ACC,     // MADDAbc_2
+    VuInstructionType::UpperType2_ACC,     // MADDAbc_3
+    VuInstructionType::UpperType1,         // MSUB
+    VuInstructionType::UpperType1,         // MSUBi
+    VuInstructionType::UpperType1,         // MSUBq
+    VuInstructionType::UpperType0,         // MSUBbc_0
+    VuInstructionType::UpperType0,         // MSUBbc_1
+    VuInstructionType::UpperType0,         // MSUBbc_2
+    VuInstructionType::UpperType0,         // MSUBbc_3
+    VuInstructionType::UpperType3_ACC,     // MSUBA
+    VuInstructionType::UpperType3_ACC,     // MSUBAi
+    VuInstructionType::UpperType3_ACC,     // MSUBAq
+    VuInstructionType::UpperType2_ACC,     // MSUBAbc_0
+    VuInstructionType::UpperType2_ACC,     // MSUBAbc_1
+    VuInstructionType::UpperType2_ACC,     // MSUBAbc_2
+    VuInstructionType::UpperType2_ACC,     // MSUBAbc_3
+    VuInstructionType::UpperType1,         // MAX
+    VuInstructionType::UpperType1,         // MAXi
+    VuInstructionType::UpperType0,         // MAXbc_0
+    VuInstructionType::UpperType0,         // MAXbc_1
+    VuInstructionType::UpperType0,         // MAXbc_2
+    VuInstructionType::UpperType0,         // MAXbc_3
+    VuInstructionType::UpperType1,         // MINI
+    VuInstructionType::UpperType1,         // MINIi
+    VuInstructionType::UpperType0,         // MINIbc_0
+    VuInstructionType::UpperType0,         // MINIbc_1
+    VuInstructionType::UpperType0,         // MINIbc_2
+    VuInstructionType::UpperType0,         // MINIbc_3
+    VuInstructionType::UpperType3_ACC,     // OPMULA
+    VuInstructionType::UpperType3_ACC,     // OPMSUB
+    VuInstructionType::UpperType3,         // NOP
+    VuInstructionType::UpperType3,         // FTOI0
+    VuInstructionType::UpperType3,         // FTOI4
+    VuInstructionType::UpperType3,         // FTOI12
+    VuInstructionType::UpperType3,         // FTOI15
+    VuInstructionType::UpperType3,         // ITOF0
+    VuInstructionType::UpperType3,         // ITOF4
+    VuInstructionType::UpperType3,         // ITOF12
+    VuInstructionType::UpperType3,         // ITOF15
+    VuInstructionType::UpperType3,         // CLIP
+   
+    // Lower Instructions              
+    VuInstructionType::LowerType4,         // DIV
+    VuInstructionType::LowerType4,         // SQRT
+    VuInstructionType::LowerType4,         // RSQRT
+    VuInstructionType::LowerType1_I,       // IADD
+    VuInstructionType::LowerType5,         // IADDI
+    VuInstructionType::LowerType8,         // IADDIU
+    VuInstructionType::LowerType1_I,       // IAND
+    VuInstructionType::LowerType1_I,       // IOR
+    VuInstructionType::LowerType1_I,       // ISUB
+    VuInstructionType::LowerType8,         // ISUBI
+    VuInstructionType::LowerType3,         // MOVE
+    VuInstructionType::LowerType3_FT_IS,   // MFIR
+    VuInstructionType::LowerType4_IT_FS,   // MTIR
+    VuInstructionType::LowerType3,         // MR32
+    VuInstructionType::LowerType7_FT_IS,   // LQ
+    VuInstructionType::LowerType3_FT_IS,   // LQD
+    VuInstructionType::LowerType3_FT_IS,   // LQI
+    VuInstructionType::LowerType7,         // SQ
+    VuInstructionType::LowerType3_IT_FS,   // SQD
+    VuInstructionType::LowerType3_IT_FS,   // SQI
+    VuInstructionType::LowerType7_I,       // ILW
+    VuInstructionType::LowerType7_I,       // ISW
+    VuInstructionType::LowerType3_I,       // ILWR
+    VuInstructionType::LowerType3_I,       // ISWR
+    VuInstructionType::LowerType4,         // RINIT
+    VuInstructionType::LowerType3,         // RGET
+    VuInstructionType::LowerType3,         // RNEXT
+    VuInstructionType::LowerType4,         // RXOR
+    VuInstructionType::LowerType3,         // WAITQ
+    VuInstructionType::LowerType8,         // FSAND
+    VuInstructionType::LowerType8,         // FSEQ
+    VuInstructionType::LowerType8,         // FSOR
+    VuInstructionType::LowerType8,         // FSSET
+    VuInstructionType::LowerType8,         // FMAND
+    VuInstructionType::LowerType8,         // FMEQ
+    VuInstructionType::LowerType8,         // FMOR
+    VuInstructionType::LowerType9,         // FCAND
+    VuInstructionType::LowerType9,         // FCEQ
+    VuInstructionType::LowerType9,         // FCOR
+    VuInstructionType::LowerType9,         // FCSET
+    VuInstructionType::LowerType8,         // FCGET
+    VuInstructionType::LowerType7_I,       // IBEQ
+    VuInstructionType::LowerType7_I,       // IBGEZ
+    VuInstructionType::LowerType7_I,       // IBGTZ
+    VuInstructionType::LowerType7_I,       // IBLEZ
+    VuInstructionType::LowerType7_I,       // IBLTZ
+    VuInstructionType::LowerType7_I,       // IBNE
+    VuInstructionType::LowerType7_I,       // B
+    VuInstructionType::LowerType7_I,       // BAL
+    VuInstructionType::LowerType7_I,       // JR
+    VuInstructionType::LowerType7_I,       // JALR
+    VuInstructionType::LowerType3,         // MFP
+    VuInstructionType::LowerType3,         // WAITP
+    VuInstructionType::LowerType3,         // ESADD
+    VuInstructionType::LowerType3,         // ERSADD
+    VuInstructionType::LowerType3,         // ELENG
+    VuInstructionType::LowerType3,         // ERLENG
+    VuInstructionType::LowerType3,         // EATANxy
+    VuInstructionType::LowerType3,         // EATANxz
+    VuInstructionType::LowerType3,         // ESUM
+    VuInstructionType::LowerType4,         // ERCPR
+    VuInstructionType::LowerType4,         // ESQRT
+    VuInstructionType::LowerType4,         // ERSQRT
+    VuInstructionType::LowerType4,         // ESIN
+    VuInstructionType::LowerType4,         // EATAN
+    VuInstructionType::LowerType4,         // EEXP
+    VuInstructionType::LowerType3,         // XGKICK
+    VuInstructionType::LowerType3_I,       // XTOP
+    VuInstructionType::LowerType3_I        // XITOP
 };
 
-VuInstructionDecoder::VuInstructionDecoder(VuInstruction lower, VuInstruction upper) :
-    lower_inst(lower),
-    upper_inst(upper),
-    decoded_inst_lower(VU_DECODE_TABLE[lower.lower_lookup().impl_index]),
-    decoded_inst_upper(VU_DECODE_TABLE[lower.upper_lookup().impl_index])
+VuInstructionType VuInstructionDecoder::decode_instruction() const
 {
+    return VU_INSTRUCTION_DECODE_TABLE[instruction_info.impl_index];
 }
 
-const VuDecodedInst& VuInstructionDecoder::decode_lower() const
+std::optional<int> VuInstructionDecoder::try_get_dest() const
 {
-    return decoded_inst_lower;
-}
+    VuInstructionType decoded = decode_instruction();
 
-const VuDecodedInst& VuInstructionDecoder::decode_upper() const
-{
-    return decoded_inst_upper;
-}
-
-const VuInstruction& VuInstructionDecoder::get_upper_inst() const
-{
-    return upper_inst;
-}
-
-const VuInstruction& VuInstructionDecoder::get_lower_inst() const
-{
-    return lower_inst;
-}
-
-std::optional<int> VuInstructionDecoder::upper_dest() const
-{
-    if (decoded_inst_upper.dest_reg.has_value())
+    switch (decoded)
     {
-        VuDecodeInfo value = decoded_inst_upper.dest_reg.value();
-        if (Bitfield* ptr = std::get_if<Bitfield>(&value))
-        {
-            return ptr->extract_from(upper_inst.value);
-        }
-    }
+        case VuInstructionType::UpperType0:
+        case VuInstructionType::UpperType1:
+        case VuInstructionType::LowerType1:
+            return instruction.fd();
+        
+        case VuInstructionType::UpperType2:
+        case VuInstructionType::UpperType3:
+        case VuInstructionType::LowerType3:
+        case VuInstructionType::LowerType7_FT_IS:
+            return instruction.ft();
 
-    return std::nullopt;
+        default:
+            return std::nullopt;
+    }
 }
 
-std::optional<int> VuInstructionDecoder::upper_src(int index) const
+std::optional<int> VuInstructionDecoder::try_get_dest_field() const
 {
-    const std::optional<VuDecodeInfo>* src_regs[3] = {
-        &decoded_inst_upper.source_reg_1,
-        &decoded_inst_upper.source_reg_2,
-        &decoded_inst_upper.source_reg_3};
+    VuInstructionType decoded = decode_instruction();
 
-    if (src_regs[index]->has_value())
+    switch (decoded)
     {
-        VuDecodeInfo value = src_regs[index]->value();
-        if (Bitfield* ptr = std::get_if<Bitfield>(&value))
-        {
-            return ptr->extract_from(upper_inst.value);
-        }
-    }
+        case VuInstructionType::UpperType0:
+        case VuInstructionType::UpperType1:
+        case VuInstructionType::UpperType2:
+        case VuInstructionType::UpperType3:
+        case VuInstructionType::LowerType1:
+        case VuInstructionType::LowerType3:
+        case VuInstructionType::LowerType7_FT_IS:
+            return instruction.dest();
 
-    return std::nullopt;
+        case VuInstructionType::LowerType4:
+            return 1 << (3 - instruction.ftf());
+
+        default:
+            return std::nullopt;
+    }
 }
 
-std::optional<int> VuInstructionDecoder::lower_dest() const
+std::optional<int> VuInstructionDecoder::try_get_src(int idx) const
 {
-    if (decoded_inst_lower.dest_reg.has_value())
-    {
-        VuDecodeInfo value = decoded_inst_lower.dest_reg.value();
-        if (Bitfield* ptr = std::get_if<Bitfield>(&value))
-        {
-            return ptr->extract_from(lower_inst.value);
-        }
-    }
+    VuInstructionType decoded = decode_instruction();
 
-    return std::nullopt;
+    switch (idx)
+    {
+        case 0: switch (decoded)
+        {
+            case VuInstructionType::UpperType0:
+            case VuInstructionType::UpperType1:
+            case VuInstructionType::UpperType2:
+            case VuInstructionType::UpperType3:
+            case VuInstructionType::UpperType1_ACC:
+            case VuInstructionType::UpperType2_ACC:
+            case VuInstructionType::UpperType3_ACC:
+            case VuInstructionType::LowerType1:
+            case VuInstructionType::LowerType3:
+            case VuInstructionType::LowerType3_IT_FS:
+            case VuInstructionType::LowerType4:
+            case VuInstructionType::LowerType4_IT_FS:
+            case VuInstructionType::LowerType7:
+            case VuInstructionType::LowerType8:
+                return instruction.fs();
+
+            default:
+                return std::nullopt;
+        }
+
+        case 1: switch (decoded)
+        {
+            case VuInstructionType::UpperType0:
+            case VuInstructionType::UpperType1:
+            case VuInstructionType::UpperType1_ACC:
+            case VuInstructionType::UpperType2:
+            case VuInstructionType::UpperType2_ACC:
+            case VuInstructionType::UpperType3:
+            case VuInstructionType::UpperType3_ACC:
+            case VuInstructionType::LowerType1:
+            case VuInstructionType::LowerType4:
+                return instruction.ft();
+
+            default:
+                return std::nullopt;
+        }
+
+        default:
+            return std::nullopt;
+    }
 }
 
-std::optional<int> VuInstructionDecoder::lower_src(int index) const
+std::optional<int> VuInstructionDecoder::try_get_src_field(int idx) const
 {
-    const std::optional<VuDecodeInfo>* src_regs[3] = {
-        &decoded_inst_lower.source_reg_1,
-        &decoded_inst_lower.source_reg_2,
-        &decoded_inst_lower.source_reg_3};
+    VuInstructionType decoded = decode_instruction();
 
-    if (src_regs[index]->has_value())
+    switch (idx)
     {
-        VuDecodeInfo value = src_regs[index]->value();
-        if (auto ptr = std::get_if<Bitfield>(&value))
+        case 0: switch (decoded)
         {
-            return ptr->extract_from(lower_inst.value);
-        }
-    }
+            case VuInstructionType::UpperType0:
+            case VuInstructionType::UpperType1:
+            case VuInstructionType::UpperType2:
+            case VuInstructionType::UpperType3:
+            case VuInstructionType::UpperType1_ACC:
+            case VuInstructionType::UpperType2_ACC:
+            case VuInstructionType::UpperType3_ACC:
+            case VuInstructionType::LowerType1:
+            case VuInstructionType::LowerType3:
+            case VuInstructionType::LowerType3_IT_FS:
+            case VuInstructionType::LowerType7:
+            case VuInstructionType::LowerType8:
+                return instruction.dest();
 
-    return std::nullopt;
+            case VuInstructionType::LowerType4:
+            case VuInstructionType::LowerType4_IT_FS:
+                return 1 << (3 - instruction.fsf());
+
+            default:
+                return std::nullopt;
+        }
+
+        case 1: switch (decoded)
+        {
+            case VuInstructionType::UpperType0:
+            case VuInstructionType::UpperType2:
+            case VuInstructionType::UpperType2_ACC:
+                return 1 << (3 - instruction.bc());
+
+            case VuInstructionType::UpperType1:
+            case VuInstructionType::UpperType1_ACC:
+            case VuInstructionType::UpperType3:
+            case VuInstructionType::UpperType3_ACC:
+            case VuInstructionType::LowerType1:
+                return instruction.dest();
+
+            case VuInstructionType::LowerType4:
+                return 1 << (3 - instruction.ftf());
+
+            default:
+                return std::nullopt;
+        }
+
+        default:
+            return std::nullopt;
+    }
+}
+
+
+bool VuInstructionDecoder::is_integer_instruction() const
+{
+    VuInstructionType decoded = decode_instruction();
+
+    switch (decoded)
+    {
+        case VuInstructionType::LowerType1:
+        case VuInstructionType::LowerType3_I:
+        case VuInstructionType::LowerType3_IT_FS:
+        case VuInstructionType::LowerType4_IT_FS:
+        case VuInstructionType::LowerType5:
+        case VuInstructionType::LowerType7:
+        case VuInstructionType::LowerType7_I:
+        case VuInstructionType::LowerType8:
+            return true;
+
+        default:
+            return false;
+    }
 }
