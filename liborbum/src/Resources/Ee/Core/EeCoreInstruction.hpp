@@ -49,7 +49,7 @@ struct EeCoreInstruction : public MipsInstruction
     static constexpr int CPI_COP_BRANCH_DELAY_LIKELY = 10;
 
     /// Performs a lookup if required and returns the instruction details.
-    const MipsInstructionInfo* get_info()
+    const MipsInstructionInfo* get_info() const
     {
         if (!info)
             info = lookup();
@@ -58,7 +58,7 @@ struct EeCoreInstruction : public MipsInstruction
 
 private:
     /// Instruction information (from performing lookup).
-    MipsInstructionInfo* info;
+    mutable MipsInstructionInfo* info;
 
     /// Determines what instruction this is by performing a lookup.
     MipsInstructionInfo* lookup() const;

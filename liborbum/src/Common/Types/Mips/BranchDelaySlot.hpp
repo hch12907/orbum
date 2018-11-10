@@ -20,6 +20,12 @@ template <size_t slots = 1, size_t inst_size = Constants::MIPS::SIZE_MIPS_INSTRU
 class BranchDelaySlot
 {
 public:
+    enum BranchState
+    {
+        EmptyBranch = -1,
+        ShouldBranch = 0,
+    };
+
     BranchDelaySlot() :
         pending_branches { std::pair(-1, 0), std::pair(-1, 0) }
     {
@@ -120,12 +126,6 @@ protected:
     // sword of std::pair = cycles left before branching
     // uptr of std::pair = address to branch to
     std::array<std::pair<sword, uptr>, slots + 1> pending_branches;
-
-    enum BranchState
-    {
-        EmptyBranch = -1,
-        ShouldBranch = 0,
-    };
 
 public:
     template <class Archive>

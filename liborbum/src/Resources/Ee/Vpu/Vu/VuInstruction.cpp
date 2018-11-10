@@ -197,110 +197,110 @@ MipsInstructionInfo VU_INSTRUCTION_TABLE[Constants::EE::VPU::VU::NUMBER_VU_INSTR
         {"MSUBAi", 65, 6, VuPipeline::FMAC},
         {"NOP", 85, 6, VuPipeline::FMAC}};
 
-MipsInstructionInfo VuInstruction::lower_lookup() const
+MipsInstructionInfo* VuInstruction::lower_lookup() const
 {
     switch (msb7())
     {
     case 0:
-        return VU_INSTRUCTION_TABLE[0];
+        return &VU_INSTRUCTION_TABLE[0];
     case 1:
-        return VU_INSTRUCTION_TABLE[1];
+        return &VU_INSTRUCTION_TABLE[1];
     case 4:
-        return VU_INSTRUCTION_TABLE[2];
+        return &VU_INSTRUCTION_TABLE[2];
     case 5:
-        return VU_INSTRUCTION_TABLE[3];
+        return &VU_INSTRUCTION_TABLE[3];
     case 8:
-        return VU_INSTRUCTION_TABLE[4];
+        return &VU_INSTRUCTION_TABLE[4];
     case 9:
-        return VU_INSTRUCTION_TABLE[5];
+        return &VU_INSTRUCTION_TABLE[5];
     case 16:
-        return VU_INSTRUCTION_TABLE[6];
+        return &VU_INSTRUCTION_TABLE[6];
     case 17:
-        return VU_INSTRUCTION_TABLE[7];
+        return &VU_INSTRUCTION_TABLE[7];
     case 18:
-        return VU_INSTRUCTION_TABLE[8];
+        return &VU_INSTRUCTION_TABLE[8];
     case 19:
-        return VU_INSTRUCTION_TABLE[9];
+        return &VU_INSTRUCTION_TABLE[9];
     case 20:
-        return VU_INSTRUCTION_TABLE[10];
+        return &VU_INSTRUCTION_TABLE[10];
     case 21:
-        return VU_INSTRUCTION_TABLE[11];
+        return &VU_INSTRUCTION_TABLE[11];
     case 22:
-        return VU_INSTRUCTION_TABLE[12];
+        return &VU_INSTRUCTION_TABLE[12];
     case 23:
-        return VU_INSTRUCTION_TABLE[13];
+        return &VU_INSTRUCTION_TABLE[13];
     case 24:
-        return VU_INSTRUCTION_TABLE[14];
+        return &VU_INSTRUCTION_TABLE[14];
     case 25:
         // fmset theoretically... but it doesn't exist.
     case 26:
-        return VU_INSTRUCTION_TABLE[15];
+        return &VU_INSTRUCTION_TABLE[15];
     case 27:
-        return VU_INSTRUCTION_TABLE[16];
+        return &VU_INSTRUCTION_TABLE[16];
     case 28:
-        return VU_INSTRUCTION_TABLE[17];
+        return &VU_INSTRUCTION_TABLE[17];
     case 32:
-        return VU_INSTRUCTION_TABLE[18];
+        return &VU_INSTRUCTION_TABLE[18];
     case 33:
-        return VU_INSTRUCTION_TABLE[19];
+        return &VU_INSTRUCTION_TABLE[19];
     case 36:
-        return VU_INSTRUCTION_TABLE[20];
+        return &VU_INSTRUCTION_TABLE[20];
     case 37:
-        return VU_INSTRUCTION_TABLE[21];
+        return &VU_INSTRUCTION_TABLE[21];
     case 40:
-        return VU_INSTRUCTION_TABLE[22];
+        return &VU_INSTRUCTION_TABLE[22];
     case 41:
-        return VU_INSTRUCTION_TABLE[23];
+        return &VU_INSTRUCTION_TABLE[23];
     case 44:
-        return VU_INSTRUCTION_TABLE[24];
+        return &VU_INSTRUCTION_TABLE[24];
     case 45:
-        return VU_INSTRUCTION_TABLE[25];
+        return &VU_INSTRUCTION_TABLE[25];
     case 46:
-        return VU_INSTRUCTION_TABLE[26];
+        return &VU_INSTRUCTION_TABLE[26];
     case 47:
-        return VU_INSTRUCTION_TABLE[27];
+        return &VU_INSTRUCTION_TABLE[27];
     case 64: // Lower OP
     {
         switch (opcode())
         {
         case 48:
-            return VU_INSTRUCTION_TABLE[28];
+            return &VU_INSTRUCTION_TABLE[28];
         case 49:
-            return VU_INSTRUCTION_TABLE[29];
+            return &VU_INSTRUCTION_TABLE[29];
         case 50:
-            return VU_INSTRUCTION_TABLE[30];
+            return &VU_INSTRUCTION_TABLE[30];
         case 52:
-            return VU_INSTRUCTION_TABLE[31];
+            return &VU_INSTRUCTION_TABLE[31];
         case 53:
-            return VU_INSTRUCTION_TABLE[32];
+            return &VU_INSTRUCTION_TABLE[32];
         case 60:
         {
             switch (fd())
             {
             case 12:
-                return VU_INSTRUCTION_TABLE[33];
+                return &VU_INSTRUCTION_TABLE[33];
             case 13:
-                return VU_INSTRUCTION_TABLE[34];
+                return &VU_INSTRUCTION_TABLE[34];
             case 14:
-                return VU_INSTRUCTION_TABLE[35];
+                return &VU_INSTRUCTION_TABLE[35];
             case 15:
-                return VU_INSTRUCTION_TABLE[36];
+                return &VU_INSTRUCTION_TABLE[36];
             case 16:
-                return VU_INSTRUCTION_TABLE[37];
+                return &VU_INSTRUCTION_TABLE[37];
             case 25:
-                return VU_INSTRUCTION_TABLE[38];
+                return &VU_INSTRUCTION_TABLE[38];
             case 26:
-                return VU_INSTRUCTION_TABLE[39];
+                return &VU_INSTRUCTION_TABLE[39];
             case 27:
-                return VU_INSTRUCTION_TABLE[40];
+                return &VU_INSTRUCTION_TABLE[40];
             case 28:
-                return VU_INSTRUCTION_TABLE[41];
+                return &VU_INSTRUCTION_TABLE[41];
             case 29:
-                return VU_INSTRUCTION_TABLE[42];
+                return &VU_INSTRUCTION_TABLE[42];
             case 30:
-                return VU_INSTRUCTION_TABLE[43];
+                return &VU_INSTRUCTION_TABLE[43];
             case 31:
-                return VU_INSTRUCTION_TABLE[44];
+                return &VU_INSTRUCTION_TABLE[44];
             default:
                 throw std::runtime_error("VU: Could not determine the lower instruction");
             }
@@ -310,25 +310,25 @@ MipsInstructionInfo VuInstruction::lower_lookup() const
             switch (fd())
             {
             case 12:
-                return VU_INSTRUCTION_TABLE[45];
+                return &VU_INSTRUCTION_TABLE[45];
             case 13:
-                return VU_INSTRUCTION_TABLE[46];
+                return &VU_INSTRUCTION_TABLE[46];
             case 14:
-                return VU_INSTRUCTION_TABLE[47];
+                return &VU_INSTRUCTION_TABLE[47];
             case 15:
-                return VU_INSTRUCTION_TABLE[48];
+                return &VU_INSTRUCTION_TABLE[48];
             case 16:
-                return VU_INSTRUCTION_TABLE[49];
+                return &VU_INSTRUCTION_TABLE[49];
             case 26:
-                return VU_INSTRUCTION_TABLE[50];
+                return &VU_INSTRUCTION_TABLE[50];
             case 28:
-                return VU_INSTRUCTION_TABLE[51];
+                return &VU_INSTRUCTION_TABLE[51];
             case 29:
-                return VU_INSTRUCTION_TABLE[52];
+                return &VU_INSTRUCTION_TABLE[52];
             case 30:
-                return VU_INSTRUCTION_TABLE[53];
+                return &VU_INSTRUCTION_TABLE[53];
             case 31:
-                return VU_INSTRUCTION_TABLE[54];
+                return &VU_INSTRUCTION_TABLE[54];
             default:
                 throw std::runtime_error("VU: Could not determine the lower instruction");
             }
@@ -338,21 +338,21 @@ MipsInstructionInfo VuInstruction::lower_lookup() const
             switch (fd())
             {
             case 13:
-                return VU_INSTRUCTION_TABLE[55];
+                return &VU_INSTRUCTION_TABLE[55];
             case 14:
-                return VU_INSTRUCTION_TABLE[56];
+                return &VU_INSTRUCTION_TABLE[56];
             case 15:
-                return VU_INSTRUCTION_TABLE[57];
+                return &VU_INSTRUCTION_TABLE[57];
             case 16:
-                return VU_INSTRUCTION_TABLE[58];
+                return &VU_INSTRUCTION_TABLE[58];
             case 28:
-                return VU_INSTRUCTION_TABLE[59];
+                return &VU_INSTRUCTION_TABLE[59];
             case 29:
-                return VU_INSTRUCTION_TABLE[60];
+                return &VU_INSTRUCTION_TABLE[60];
             case 30:
-                return VU_INSTRUCTION_TABLE[61];
+                return &VU_INSTRUCTION_TABLE[61];
             case 31:
-                return VU_INSTRUCTION_TABLE[62];
+                return &VU_INSTRUCTION_TABLE[62];
             default:
                 throw std::runtime_error("VU: Could not determine the lower instruction");
             }
@@ -362,17 +362,17 @@ MipsInstructionInfo VuInstruction::lower_lookup() const
             switch (fd())
             {
             case 13:
-                return VU_INSTRUCTION_TABLE[63];
+                return &VU_INSTRUCTION_TABLE[63];
             case 14:
-                return VU_INSTRUCTION_TABLE[64];
+                return &VU_INSTRUCTION_TABLE[64];
             case 15:
-                return VU_INSTRUCTION_TABLE[65];
+                return &VU_INSTRUCTION_TABLE[65];
             case 16:
-                return VU_INSTRUCTION_TABLE[66];
+                return &VU_INSTRUCTION_TABLE[66];
             case 28:
-                return VU_INSTRUCTION_TABLE[67];
+                return &VU_INSTRUCTION_TABLE[67];
             case 30:
-                return VU_INSTRUCTION_TABLE[68];
+                return &VU_INSTRUCTION_TABLE[68];
             default:
                 throw std::runtime_error("VU: Could not determine the lower instruction");
             }
@@ -388,134 +388,134 @@ MipsInstructionInfo VuInstruction::lower_lookup() const
     }
 }
 
-MipsInstructionInfo VuInstruction::upper_lookup() const
+MipsInstructionInfo* VuInstruction::upper_lookup() const
 {
     switch (opcode())
     {
     case 0:
-        return VU_INSTRUCTION_TABLE[69];
+        return &VU_INSTRUCTION_TABLE[69];
     case 1:
-        return VU_INSTRUCTION_TABLE[70];
+        return &VU_INSTRUCTION_TABLE[70];
     case 2:
-        return VU_INSTRUCTION_TABLE[71];
+        return &VU_INSTRUCTION_TABLE[71];
     case 3:
-        return VU_INSTRUCTION_TABLE[72];
+        return &VU_INSTRUCTION_TABLE[72];
     case 4:
-        return VU_INSTRUCTION_TABLE[73];
+        return &VU_INSTRUCTION_TABLE[73];
     case 5:
-        return VU_INSTRUCTION_TABLE[74];
+        return &VU_INSTRUCTION_TABLE[74];
     case 6:
-        return VU_INSTRUCTION_TABLE[75];
+        return &VU_INSTRUCTION_TABLE[75];
     case 7:
-        return VU_INSTRUCTION_TABLE[76];
+        return &VU_INSTRUCTION_TABLE[76];
     case 8:
-        return VU_INSTRUCTION_TABLE[77];
+        return &VU_INSTRUCTION_TABLE[77];
     case 9:
-        return VU_INSTRUCTION_TABLE[78];
+        return &VU_INSTRUCTION_TABLE[78];
     case 10:
-        return VU_INSTRUCTION_TABLE[79];
+        return &VU_INSTRUCTION_TABLE[79];
     case 11:
-        return VU_INSTRUCTION_TABLE[80];
+        return &VU_INSTRUCTION_TABLE[80];
     case 12:
-        return VU_INSTRUCTION_TABLE[81];
+        return &VU_INSTRUCTION_TABLE[81];
     case 13:
-        return VU_INSTRUCTION_TABLE[82];
+        return &VU_INSTRUCTION_TABLE[82];
     case 14:
-        return VU_INSTRUCTION_TABLE[83];
+        return &VU_INSTRUCTION_TABLE[83];
     case 15:
-        return VU_INSTRUCTION_TABLE[84];
+        return &VU_INSTRUCTION_TABLE[84];
     case 16:
-        return VU_INSTRUCTION_TABLE[85];
+        return &VU_INSTRUCTION_TABLE[85];
     case 17:
-        return VU_INSTRUCTION_TABLE[86];
+        return &VU_INSTRUCTION_TABLE[86];
     case 18:
-        return VU_INSTRUCTION_TABLE[87];
+        return &VU_INSTRUCTION_TABLE[87];
     case 19:
-        return VU_INSTRUCTION_TABLE[88];
+        return &VU_INSTRUCTION_TABLE[88];
     case 20:
-        return VU_INSTRUCTION_TABLE[89];
+        return &VU_INSTRUCTION_TABLE[89];
     case 21:
-        return VU_INSTRUCTION_TABLE[90];
+        return &VU_INSTRUCTION_TABLE[90];
     case 22:
-        return VU_INSTRUCTION_TABLE[91];
+        return &VU_INSTRUCTION_TABLE[91];
     case 23:
-        return VU_INSTRUCTION_TABLE[92];
+        return &VU_INSTRUCTION_TABLE[92];
     case 24:
-        return VU_INSTRUCTION_TABLE[93];
+        return &VU_INSTRUCTION_TABLE[93];
     case 25:
-        return VU_INSTRUCTION_TABLE[94];
+        return &VU_INSTRUCTION_TABLE[94];
     case 26:
-        return VU_INSTRUCTION_TABLE[95];
+        return &VU_INSTRUCTION_TABLE[95];
     case 27:
-        return VU_INSTRUCTION_TABLE[96];
+        return &VU_INSTRUCTION_TABLE[96];
     case 28:
-        return VU_INSTRUCTION_TABLE[97];
+        return &VU_INSTRUCTION_TABLE[97];
     case 29:
-        return VU_INSTRUCTION_TABLE[98];
+        return &VU_INSTRUCTION_TABLE[98];
     case 30:
-        return VU_INSTRUCTION_TABLE[99];
+        return &VU_INSTRUCTION_TABLE[99];
     case 31:
-        return VU_INSTRUCTION_TABLE[100];
+        return &VU_INSTRUCTION_TABLE[100];
     case 32:
-        return VU_INSTRUCTION_TABLE[101];
+        return &VU_INSTRUCTION_TABLE[101];
     case 33:
-        return VU_INSTRUCTION_TABLE[102];
+        return &VU_INSTRUCTION_TABLE[102];
     case 34:
-        return VU_INSTRUCTION_TABLE[103];
+        return &VU_INSTRUCTION_TABLE[103];
     case 35:
-        return VU_INSTRUCTION_TABLE[104];
+        return &VU_INSTRUCTION_TABLE[104];
     case 36:
-        return VU_INSTRUCTION_TABLE[105];
+        return &VU_INSTRUCTION_TABLE[105];
     case 37:
-        return VU_INSTRUCTION_TABLE[106];
+        return &VU_INSTRUCTION_TABLE[106];
     case 38:
-        return VU_INSTRUCTION_TABLE[107];
+        return &VU_INSTRUCTION_TABLE[107];
     case 39:
-        return VU_INSTRUCTION_TABLE[108];
+        return &VU_INSTRUCTION_TABLE[108];
     case 40:
-        return VU_INSTRUCTION_TABLE[109];
+        return &VU_INSTRUCTION_TABLE[109];
     case 41:
-        return VU_INSTRUCTION_TABLE[110];
+        return &VU_INSTRUCTION_TABLE[110];
     case 42:
-        return VU_INSTRUCTION_TABLE[111];
+        return &VU_INSTRUCTION_TABLE[111];
     case 43:
-        return VU_INSTRUCTION_TABLE[112];
+        return &VU_INSTRUCTION_TABLE[112];
     case 44:
-        return VU_INSTRUCTION_TABLE[113];
+        return &VU_INSTRUCTION_TABLE[113];
     case 45:
-        return VU_INSTRUCTION_TABLE[114];
+        return &VU_INSTRUCTION_TABLE[114];
     case 46:
-        return VU_INSTRUCTION_TABLE[115];
+        return &VU_INSTRUCTION_TABLE[115];
     case 47:
-        return VU_INSTRUCTION_TABLE[116];
+        return &VU_INSTRUCTION_TABLE[116];
     case 60:
     {
         switch (fd())
         {
         case 0:
-            return VU_INSTRUCTION_TABLE[117];
+            return &VU_INSTRUCTION_TABLE[117];
         case 1:
-            return VU_INSTRUCTION_TABLE[118];
+            return &VU_INSTRUCTION_TABLE[118];
         case 2:
-            return VU_INSTRUCTION_TABLE[119];
+            return &VU_INSTRUCTION_TABLE[119];
         case 3:
-            return VU_INSTRUCTION_TABLE[120];
+            return &VU_INSTRUCTION_TABLE[120];
         case 4:
-            return VU_INSTRUCTION_TABLE[121];
+            return &VU_INSTRUCTION_TABLE[121];
         case 5:
-            return VU_INSTRUCTION_TABLE[122];
+            return &VU_INSTRUCTION_TABLE[122];
         case 6:
-            return VU_INSTRUCTION_TABLE[123];
+            return &VU_INSTRUCTION_TABLE[123];
         case 7:
-            return VU_INSTRUCTION_TABLE[124];
+            return &VU_INSTRUCTION_TABLE[124];
         case 8:
-            return VU_INSTRUCTION_TABLE[125];
+            return &VU_INSTRUCTION_TABLE[125];
         case 9:
-            return VU_INSTRUCTION_TABLE[126];
+            return &VU_INSTRUCTION_TABLE[126];
         case 10:
-            return VU_INSTRUCTION_TABLE[127];
+            return &VU_INSTRUCTION_TABLE[127];
         case 11:
-            return VU_INSTRUCTION_TABLE[128];
+            return &VU_INSTRUCTION_TABLE[128];
         default:
             throw std::runtime_error("VU: Could not determine the upper instruction");
         }
@@ -525,29 +525,29 @@ MipsInstructionInfo VuInstruction::upper_lookup() const
         switch (fd())
         {
         case 0:
-            return VU_INSTRUCTION_TABLE[129];
+            return &VU_INSTRUCTION_TABLE[129];
         case 1:
-            return VU_INSTRUCTION_TABLE[130];
+            return &VU_INSTRUCTION_TABLE[130];
         case 2:
-            return VU_INSTRUCTION_TABLE[131];
+            return &VU_INSTRUCTION_TABLE[131];
         case 3:
-            return VU_INSTRUCTION_TABLE[132];
+            return &VU_INSTRUCTION_TABLE[132];
         case 4:
-            return VU_INSTRUCTION_TABLE[133];
+            return &VU_INSTRUCTION_TABLE[133];
         case 5:
-            return VU_INSTRUCTION_TABLE[134];
+            return &VU_INSTRUCTION_TABLE[134];
         case 6:
-            return VU_INSTRUCTION_TABLE[135];
+            return &VU_INSTRUCTION_TABLE[135];
         case 7:
-            return VU_INSTRUCTION_TABLE[136];
+            return &VU_INSTRUCTION_TABLE[136];
         case 8:
-            return VU_INSTRUCTION_TABLE[137];
+            return &VU_INSTRUCTION_TABLE[137];
         case 9:
-            return VU_INSTRUCTION_TABLE[138];
+            return &VU_INSTRUCTION_TABLE[138];
         case 10:
-            return VU_INSTRUCTION_TABLE[139];
+            return &VU_INSTRUCTION_TABLE[139];
         case 11:
-            return VU_INSTRUCTION_TABLE[140];
+            return &VU_INSTRUCTION_TABLE[140];
         default:
             throw std::runtime_error("VU: Could not determine the upper instruction");
         }
@@ -557,29 +557,29 @@ MipsInstructionInfo VuInstruction::upper_lookup() const
         switch (fd())
         {
         case 0:
-            return VU_INSTRUCTION_TABLE[141];
+            return &VU_INSTRUCTION_TABLE[141];
         case 1:
-            return VU_INSTRUCTION_TABLE[142];
+            return &VU_INSTRUCTION_TABLE[142];
         case 2:
-            return VU_INSTRUCTION_TABLE[143];
+            return &VU_INSTRUCTION_TABLE[143];
         case 3:
-            return VU_INSTRUCTION_TABLE[144];
+            return &VU_INSTRUCTION_TABLE[144];
         case 4:
-            return VU_INSTRUCTION_TABLE[145];
+            return &VU_INSTRUCTION_TABLE[145];
         case 5:
-            return VU_INSTRUCTION_TABLE[146];
+            return &VU_INSTRUCTION_TABLE[146];
         case 6:
-            return VU_INSTRUCTION_TABLE[147];
+            return &VU_INSTRUCTION_TABLE[147];
         case 7:
-            return VU_INSTRUCTION_TABLE[148];
+            return &VU_INSTRUCTION_TABLE[148];
         case 8:
-            return VU_INSTRUCTION_TABLE[149];
+            return &VU_INSTRUCTION_TABLE[149];
         case 9:
-            return VU_INSTRUCTION_TABLE[150];
+            return &VU_INSTRUCTION_TABLE[150];
         case 10:
-            return VU_INSTRUCTION_TABLE[151];
+            return &VU_INSTRUCTION_TABLE[151];
         case 11:
-            return VU_INSTRUCTION_TABLE[152];
+            return &VU_INSTRUCTION_TABLE[152];
         default:
             throw std::runtime_error("VU: Could not determine the upper instruction");
         }
@@ -589,27 +589,27 @@ MipsInstructionInfo VuInstruction::upper_lookup() const
         switch (fd())
         {
         case 0:
-            return VU_INSTRUCTION_TABLE[153];
+            return &VU_INSTRUCTION_TABLE[153];
         case 1:
-            return VU_INSTRUCTION_TABLE[154];
+            return &VU_INSTRUCTION_TABLE[154];
         case 2:
-            return VU_INSTRUCTION_TABLE[155];
+            return &VU_INSTRUCTION_TABLE[155];
         case 3:
-            return VU_INSTRUCTION_TABLE[156];
+            return &VU_INSTRUCTION_TABLE[156];
         case 4:
-            return VU_INSTRUCTION_TABLE[157];
+            return &VU_INSTRUCTION_TABLE[157];
         case 5:
-            return VU_INSTRUCTION_TABLE[158];
+            return &VU_INSTRUCTION_TABLE[158];
         case 6:
-            return VU_INSTRUCTION_TABLE[159];
+            return &VU_INSTRUCTION_TABLE[159];
         case 7:
-            return VU_INSTRUCTION_TABLE[160];
+            return &VU_INSTRUCTION_TABLE[160];
         case 8:
-            return VU_INSTRUCTION_TABLE[161];
+            return &VU_INSTRUCTION_TABLE[161];
         case 9:
-            return VU_INSTRUCTION_TABLE[162];
+            return &VU_INSTRUCTION_TABLE[162];
         case 11:
-            return VU_INSTRUCTION_TABLE[163];
+            return &VU_INSTRUCTION_TABLE[163];
         default:
             throw std::runtime_error("VU: Could not determine the upper instruction");
         }
@@ -618,4 +618,20 @@ MipsInstructionInfo VuInstruction::upper_lookup() const
     default:
         throw std::runtime_error("VU: Could not determine the upper instruction");
     }
+}
+
+MipsInstructionInfo& VuInstruction::get_lower_info() const
+{
+    if (!lower_info)
+        lower_info = lower_lookup();
+
+    return *lower_info;
+}
+
+MipsInstructionInfo& VuInstruction::get_upper_info() const
+{
+    if (!upper_info)
+        upper_info = upper_lookup();
+
+    return *upper_info;
 }

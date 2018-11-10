@@ -34,14 +34,13 @@ int CVuInterpreter::time_step(const int ticks_available)
 
         const uword upper_raw_inst = (raw_inst >> 32) & 0xFFFFFFFF;
         const VuInstruction upper_inst = VuInstruction(upper_raw_inst);
-        const MipsInstructionInfo upper_info = upper_inst.lower_lookup();
+        const MipsInstructionInfo upper_info = upper_inst.get_upper_info();
         const VuInstructionDecoder upper_decoder = VuInstructionDecoder(upper_inst, upper_info);
 
         const uword lower_raw_inst = raw_inst & 0xFFFFFFFF;
         const VuInstruction lower_inst = VuInstruction(lower_raw_inst);
-        const MipsInstructionInfo lower_info = lower_inst.lower_lookup();
+        const MipsInstructionInfo lower_info = lower_inst.get_lower_info();
         const VuInstructionDecoder lower_decoder = VuInstructionDecoder(lower_inst, lower_info);
-
 
         // Flush the pipelines
         unit->efu.consume_cycle(1);

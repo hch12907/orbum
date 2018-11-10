@@ -246,7 +246,7 @@ std::optional<int> VuInstructionDecoder::try_get_src(int idx) const
 
             default:
                 return std::nullopt;
-        }
+        };
 
         case 1: switch (decoded)
         {
@@ -263,7 +263,7 @@ std::optional<int> VuInstructionDecoder::try_get_src(int idx) const
 
             default:
                 return std::nullopt;
-        }
+        };
 
         default:
             return std::nullopt;

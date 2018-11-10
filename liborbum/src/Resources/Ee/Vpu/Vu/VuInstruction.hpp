@@ -167,6 +167,13 @@ struct VuInstruction : public MipsInstruction
         return W.extract_from(value) > 0;
     }
 
-    MipsInstructionInfo lower_lookup() const;
-    MipsInstructionInfo upper_lookup() const;
+    MipsInstructionInfo& get_lower_info() const;
+    MipsInstructionInfo& get_upper_info() const;
+
+private:
+    MipsInstructionInfo* lower_lookup() const;
+    MipsInstructionInfo* upper_lookup() const;
+
+    mutable MipsInstructionInfo* lower_info;
+    mutable MipsInstructionInfo* upper_info;
 };
