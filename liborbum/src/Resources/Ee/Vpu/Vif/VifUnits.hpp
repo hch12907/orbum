@@ -1,9 +1,12 @@
 #pragma once
 
+#include <algorithm>
+
 #include <cereal/cereal.hpp>
 
 #include "Common/Types/FifoQueue/DmaFifoQueue.hpp"
 #include "Resources/Ee/Vpu/Vif/VifUnitRegisters.hpp"
+#include "Resources/Ee/Vpu/Vif/VifcodeInstruction.hpp"
 
 // A base class for a VIF core.
 class VifUnit_Base
@@ -15,7 +18,7 @@ public:
     int core_id;
 
     /// The instruction the VIF is currently processing.
-    VifcodeInstruction inst;
+    std::unique_ptr<VifcodeInstruction> inst;
 
     /// The data being processed by the VIF.
     uword processing_data;

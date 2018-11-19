@@ -71,6 +71,16 @@ struct VifcodeInstruction : public MipsInstruction
         return static_cast<ubyte>(M.extract_from(value));
     }
 
+    ubyte vl() const
+    {
+        return static_cast<ubyte>(VL.extract_from(value));
+    }
+
+    ubyte vn() const
+    {
+        return static_cast<ubyte>(VN.extract_from(value));
+    }
+
     /// Performs a lookup if required and returns the instruction details.
     const MipsInstructionInfo* get_info() const
     {

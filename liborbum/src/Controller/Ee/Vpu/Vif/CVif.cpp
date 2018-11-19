@@ -72,9 +72,9 @@ int CVif::time_step(const int ticks_available)
             if (!status)
             {
                 unit->code.write_uword(data);
-                unit->inst = VifcodeInstruction(data);
+                unit->inst = std::make_unique<VifcodeInstruction>(data);
                 unit->stat.insert_field(VifUnitRegister_Stat::VPS, 0b10);
-                unit->packets_left = obtain_required_words(unit->inst);
+                unit->packets_left = obtain_required_words(*unit->inst);
 
                 continue;
             }
@@ -82,7 +82,7 @@ int CVif::time_step(const int ticks_available)
             {
                 unit->packets_left--;
 
-                (this->*INSTRUCTION_TABLE[unit->inst.get_info().impl_index])(unit, unit->inst);
+                (this->*INSTRUCTION_TABLE[unit->inst->get_info()->impl_index])(unit, *unit->inst);
 
                 // If there are no packets left, set the VIF status to idle
                 if (!unit->packets_left)
@@ -90,7 +90,7 @@ int CVif::time_step(const int ticks_available)
                     unit->stat.insert_field(VifUnitRegister_Stat::VPS, 0b00);
 
                     // If the I bit is set, raise an interrupt
-                    if (unit->inst.i())
+                    if ((*unit->inst).i())
                     {
                         auto _lock = r.ee.intc.stat.scope_lock();
                         r.ee.intc.stat.insert_field(EeIntcRegister_Stat::VIF_KEYS[unit->core_id], 1);
@@ -114,9 +114,6 @@ int CVif::obtain_required_words(const VifcodeInstruction instruction) const
 
     case SpecialVifcodePacketUsage::Immediate:
         return 1 + instruction.imm() * 4;
-
-    case SpecialVifcodePacketUsage::Unpack:
-        return 10; // Fixme: This is COMPLETELY wrong
 
     default:
         return instruction.get_info()->cpi;

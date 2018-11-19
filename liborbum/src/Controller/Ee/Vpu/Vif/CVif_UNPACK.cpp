@@ -3,10 +3,6 @@
 #include "Core.hpp"
 #include "Controller/Ee/Vpu/Vif/CVif.hpp"
 
-void CVif::UNPACK(VifUnit_Base* unit, const VifcodeInstruction inst)
-{
-}
-
 void CVif::UNPACK_S_32(VifUnit_Base* unit, const VifcodeInstruction inst)
 {
 }

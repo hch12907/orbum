@@ -49,7 +49,6 @@ public:
     void MPG(VifUnit_Base* unit, const VifcodeInstruction inst);
     void DIRECT(VifUnit_Base* unit, const VifcodeInstruction inst);
     void DIRECTHL(VifUnit_Base* unit, const VifcodeInstruction inst);
-    void UNPACK(VifUnit_Base* unit, const VifcodeInstruction inst);
     void UNPACK_S_32(VifUnit_Base* unit, const VifcodeInstruction inst);
     void UNPACK_S_16(VifUnit_Base* unit, const VifcodeInstruction inst);
     void UNPACK_S_8(VifUnit_Base* unit, const VifcodeInstruction inst);
@@ -89,7 +88,19 @@ public:
             &CVif::MPG,
             &CVif::DIRECT,
             &CVif::DIRECTHL,
-            &CVif::UNPACK,
+            &CVif::UNPACK_S_32,
+            &CVif::UNPACK_S_16,
+            &CVif::UNPACK_S_8,
+            &CVif::UNPACK_V2_32,
+            &CVif::UNPACK_V2_16,
+            &CVif::UNPACK_V2_8,
+            &CVif::UNPACK_V3_32,
+            &CVif::UNPACK_V3_16,
+            &CVif::UNPACK_V3_8,
+            &CVif::UNPACK_V4_32,
+            &CVif::UNPACK_V4_16,
+            &CVif::UNPACK_V4_8,
+            &CVif::UNPACK_V4_5
         };
 
 private:

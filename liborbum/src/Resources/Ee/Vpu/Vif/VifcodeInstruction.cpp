@@ -1,6 +1,6 @@
 #include "Resources/Ee/Vpu/Vif/VifcodeInstruction.hpp"
 
-MipsInstructionInfo VIFCODE_INSTRUCTION_TABLE[21] =
+MipsInstructionInfo VIFCODE_INSTRUCTION_TABLE[34] =
     {
         {"NOP", 1, 1},
         {"STCYCL", 2, 1},
@@ -22,7 +22,20 @@ MipsInstructionInfo VIFCODE_INSTRUCTION_TABLE[21] =
         {"MPG", 18, SpecialVifcodePacketUsage::Num},
         {"DIRECT", 19, SpecialVifcodePacketUsage::Immediate},
         {"DIRECTHL", 20, SpecialVifcodePacketUsage::Immediate},
-        {"UNPACK", 21, SpecialVifcodePacketUsage::Unpack}};
+        {"UNPACK_S_32", 21, 4},
+        {"UNPACK_S_16", 22, 3},
+        {"UNPACK_S_8", 23, 2},
+        {"UNPACK_V2_32", 24, 7},
+        {"UNPACK_V2_16", 25, 4},
+        {"UNPACK_V2_8", 26, 3},
+        {"UNPACK_V3_32", 27, 10},
+        {"UNPACK_V3_16", 28, 6},
+        {"UNPACK_V3_8", 29, 4},
+        {"UNPACK_V4_32", 30, 13},
+        {"UNPACK_V4_16", 31, 7},
+        {"UNPACK_V4_8", 32, 4},
+        {"UNPACK_V4_5", 33, 3},
+        {"UNKNOWN", 0, 1}};
 
 VifcodeInstruction::VifcodeInstruction(const uword value) :
     MipsInstruction(value),
@@ -66,8 +79,6 @@ MipsInstructionInfo* VifcodeInstruction::lookup() const
             return &VIFCODE_INSTRUCTION_TABLE[12];
         case 23:
             return &VIFCODE_INSTRUCTION_TABLE[13];
-        default:
-            throw std::runtime_error("Could not determine instruction");
         }
     }
     case 1:
@@ -80,8 +91,6 @@ MipsInstructionInfo* VifcodeInstruction::lookup() const
             return &VIFCODE_INSTRUCTION_TABLE[15];
         case 17:
             return &VIFCODE_INSTRUCTION_TABLE[16];
-        default:
-            throw std::runtime_error("Could not determine instruction");
         }
     }
     case 2:
@@ -94,13 +103,41 @@ MipsInstructionInfo* VifcodeInstruction::lookup() const
             return &VIFCODE_INSTRUCTION_TABLE[18];
         case 17:
             return &VIFCODE_INSTRUCTION_TABLE[19];
-        default:
-            throw std::runtime_error("Could not determine instruction");
         }
     }
     case 3:
-        return &VIFCODE_INSTRUCTION_TABLE[20];
+    {
+        switch (cmdlo() & 0xF) // ignore M bit
+        {
+        case 0:
+            return &VIFCODE_INSTRUCTION_TABLE[20];
+        case 1:
+            return &VIFCODE_INSTRUCTION_TABLE[21];
+        case 2:
+            return &VIFCODE_INSTRUCTION_TABLE[22];
+        case 4:
+            return &VIFCODE_INSTRUCTION_TABLE[23];
+        case 5:
+            return &VIFCODE_INSTRUCTION_TABLE[24];
+        case 6:
+            return &VIFCODE_INSTRUCTION_TABLE[25];
+        case 8:
+            return &VIFCODE_INSTRUCTION_TABLE[26];
+        case 9:
+            return &VIFCODE_INSTRUCTION_TABLE[27];
+        case 10:
+            return &VIFCODE_INSTRUCTION_TABLE[28];
+        case 12:
+            return &VIFCODE_INSTRUCTION_TABLE[29];
+        case 13:
+            return &VIFCODE_INSTRUCTION_TABLE[30];
+        case 14:
+            return &VIFCODE_INSTRUCTION_TABLE[31];
+        case 15:
+            return &VIFCODE_INSTRUCTION_TABLE[32];
+        }
+    }
     default:
-        throw std::runtime_error("Could not determine instruction");
+        return &VIFCODE_INSTRUCTION_TABLE[33];
     }
 }
