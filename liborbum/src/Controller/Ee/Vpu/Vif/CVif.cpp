@@ -3,7 +3,6 @@
 #include "Controller/Ee/Vpu/Vif/CVif.hpp"
 
 #include "Core.hpp"
-#include "Resources/RResources.hpp"
 
 CVif::CVif(Core* core) :
     CController(core)
@@ -58,38 +57,70 @@ int CVif::time_step(const int ticks_available)
         // Check the FIFO queue for incoming DMA packet. Exit early if there is nothing to process.
         if (!unit->dma_fifo_queue->has_read_available(NUMBER_BYTES_IN_QWORD))
             continue;
-        uqword packet;
-        unit->dma_fifo_queue->read(reinterpret_cast<ubyte*>(&packet), NUMBER_BYTES_IN_QWORD);
 
-        // We have an incoming DMA unit of data, now we must split it into 4 x 32-bit and process each one. // TODO: check wih pcsx2's code.
-        for (auto& data : packet.uw)
+        uqword raw_data;
+        unit->dma_fifo_queue->read(reinterpret_cast<ubyte*>(&raw_data), NUMBER_BYTES_IN_QWORD);
+
+        for (uword data : raw_data.uw)
         {
-            // Check the NUM register, to determine if we are continuing a VIFcode instruction instead of reading a VIFcode.
-            if (unit->num.extract_field(VifUnitRegister_Num::NUM))
+            // Four VIF statuses: 0b00 Idle, 01 Waiting for data, 10 Decoding VIFcode, 11 Decompressing data
+            const ubyte status = unit->stat.extract_field(VifUnitRegister_Stat::VPS);
+            
+            unit->processing_data = data;
+
+            // If the VIF is idling, treat the data as a VIFcode
+            if (!status)
             {
+                unit->code.write_uword(data);
+                unit->inst = VifcodeInstruction(data);
+                unit->stat.insert_field(VifUnitRegister_Stat::VPS, 0b10);
+                unit->packets_left = obtain_required_words(unit->inst);
+
+                continue;
             }
             else
             {
-                // Set the current data as the VIFcode.
-                VifcodeInstruction inst = VifcodeInstruction(data);
+                unit->packets_left--;
 
-                // Process the VIFcode by calling the instruction handler.
-                (this->*INSTRUCTION_TABLE[inst.get_info()->impl_index])(unit, inst);
+                (this->*INSTRUCTION_TABLE[unit->inst.get_info().impl_index])(unit, unit->inst);
 
-                // If the I bit is set, we need to raise an interrupt after the whole VIF packet has been processed - set a context variable.
-                /*
-                if (instruction.i())
+                // If there are no packets left, set the VIF status to idle
+                if (!unit->packets_left)
                 {
-                    auto _lock = r.ee.intc.stat.scope_lock();
-                    r.ee.intc.stat.insert_field(EeIntcRegister_Stat::VIF, 1);
+                    unit->stat.insert_field(VifUnitRegister_Stat::VPS, 0b00);
+
+                    // If the I bit is set, raise an interrupt
+                    if (unit->inst.i())
+                    {
+                        auto _lock = r.ee.intc.stat.scope_lock();
+                        r.ee.intc.stat.insert_field(EeIntcRegister_Stat::VIF_KEYS[unit->core_id], 1);
+                    }
+
+                    continue;
                 }
-                */
             }
         }
     }
 
-    // TODO: different for each unit...
     return 1;
+}
+
+int CVif::obtain_required_words(const VifcodeInstruction instruction) const
+{
+    switch (instruction.get_info()->cpi)
+    {
+    case SpecialVifcodePacketUsage::Num:
+        return 1 + instruction.num() * 2;
+
+    case SpecialVifcodePacketUsage::Immediate:
+        return 1 + instruction.imm() * 4;
+
+    case SpecialVifcodePacketUsage::Unpack:
+        return 10; // Fixme: This is COMPLETELY wrong
+
+    default:
+        return instruction.get_info()->cpi;
+    }
 }
 
 void CVif::INSTRUCTION_UNSUPPORTED(VifUnit_Base* unit, const VifcodeInstruction inst)

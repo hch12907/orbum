@@ -19,10 +19,10 @@ MipsInstructionInfo VIFCODE_INSTRUCTION_TABLE[21] =
         {"STMASK", 15, 2},
         {"STROW", 16, 5},
         {"STCOL", 17, 5},
-        {"MPG", 18, 10},
-        {"DIRECT", 19, 10},
-        {"DIRECTHL", 20, 10},
-        {"UNPACK", 21, 100}};
+        {"MPG", 18, SpecialVifcodePacketUsage::Num},
+        {"DIRECT", 19, SpecialVifcodePacketUsage::Immediate},
+        {"DIRECTHL", 20, SpecialVifcodePacketUsage::Immediate},
+        {"UNPACK", 21, SpecialVifcodePacketUsage::Unpack}};
 
 VifcodeInstruction::VifcodeInstruction(const uword value) :
     MipsInstruction(value),

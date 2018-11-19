@@ -14,6 +14,15 @@ public:
     /// ID of the VIF unit.
     int core_id;
 
+    /// The instruction the VIF is currently processing.
+    VifcodeInstruction inst;
+
+    /// The data being processed by the VIF.
+    uword processing_data;
+
+    /// The amount of packets that are needed for processing.
+    uword packets_left;
+
     /// DMA FIFO queue.
     DmaFifoQueue<>* dma_fifo_queue;
 
