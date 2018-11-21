@@ -54,19 +54,25 @@ int CVif::time_step(const int ticks_available)
         if (unit->stat.is_stalled())
             continue;
 
+        // If the VIF is waiting for the VU, run the current instruction and call it a day
+        if (unit->stat.extract_field(VifUnitRegister_Stat::VEW))
+        {
+            (this->*INSTRUCTION_TABLE[unit->inst->get_info()->impl_index])(unit, *unit->inst);
+            continue;
+        }
+
         // Check the FIFO queue for incoming DMA packet. Exit early if there is nothing to process.
         if (!unit->dma_fifo_queue->has_read_available(NUMBER_BYTES_IN_QWORD))
             continue;
 
-        uqword raw_data;
-        unit->dma_fifo_queue->read(reinterpret_cast<ubyte*>(&raw_data), NUMBER_BYTES_IN_QWORD);
-
-        for (uword data : raw_data.uw)
+        for (int i = unit->packet_progress; i < NUMBER_WORDS_IN_QWORD; i++, unit->packet_progress = i)
         {
+            unit->dma_fifo_queue->read(reinterpret_cast<ubyte*>(&unit->processing_data), NUMBER_BYTES_IN_WORD);
+
             // Four VIF statuses: 0b00 Idle, 01 Waiting for data, 10 Decoding VIFcode, 11 Decompressing data
             const ubyte status = unit->stat.extract_field(VifUnitRegister_Stat::VPS);
             
-            unit->processing_data = data;
+            const uword& data = unit->processing_data;
 
             // If the VIF is idling, treat the data as a VIFcode
             if (!status)
@@ -74,18 +80,18 @@ int CVif::time_step(const int ticks_available)
                 unit->code.write_uword(data);
                 unit->inst = std::make_unique<VifcodeInstruction>(data);
                 unit->stat.insert_field(VifUnitRegister_Stat::VPS, 0b10);
-                unit->packets_left = obtain_required_words(*unit->inst);
+                unit->subpackets_left = obtain_required_words(*unit->inst);
 
                 continue;
             }
             else
             {
-                unit->packets_left--;
+                unit->subpackets_left--;
 
                 (this->*INSTRUCTION_TABLE[unit->inst->get_info()->impl_index])(unit, *unit->inst);
 
                 // If there are no packets left, set the VIF status to idle
-                if (!unit->packets_left)
+                if (!unit->subpackets_left)
                 {
                     unit->stat.insert_field(VifUnitRegister_Stat::VPS, 0b00);
 
@@ -99,6 +105,11 @@ int CVif::time_step(const int ticks_available)
                     continue;
                 }
             }
+        }
+
+        if (unit->packet_progress >= NUMBER_WORDS_IN_QWORD)
+        {
+            unit->packet_progress = 0;
         }
     }
 

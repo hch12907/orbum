@@ -86,7 +86,7 @@ void CVif::MARK(VifUnit_Base* unit, const VifcodeInstruction inst)
 
 void CVif::STMASK(VifUnit_Base* unit, const VifcodeInstruction inst)
 {
-    if (unit->packets_left)
+    if (unit->subpackets_left)
         return;
 
     unit->mask.write_uword(unit->processing_data);
@@ -94,20 +94,20 @@ void CVif::STMASK(VifUnit_Base* unit, const VifcodeInstruction inst)
 
 void CVif::STROW(VifUnit_Base* unit, const VifcodeInstruction inst)
 {
-    if (unit->packets_left >= 4)
+    if (unit->subpackets_left >= 4)
         return;
 
-    SizedWordRegister* row_regs[4] = { &unit->r3, &unit->r2, &unit->r1, &unit->r0 };
+    SizedWordRegister *const row_regs[4] = { &unit->r3, &unit->r2, &unit->r1, &unit->r0 };
 
-    row_regs[unit->packets_left]->write_uword(unit->processing_data);
+    row_regs[unit->subpackets_left]->write_uword(unit->processing_data);
 }
 
 void CVif::STCOL(VifUnit_Base* unit, const VifcodeInstruction inst)
 {
-    if (unit->packets_left >= 4)
+    if (unit->subpackets_left >= 4)
         return;
 
-    SizedWordRegister* col_regs[4] = { &unit->c3, &unit->c2, &unit->c1, &unit->c0 };
+    SizedWordRegister *const col_regs[4] = { &unit->c3, &unit->c2, &unit->c1, &unit->c0 };
 
-    col_regs[unit->packets_left]->write_uword(unit->processing_data);
+    col_regs[unit->subpackets_left]->write_uword(unit->processing_data);
 }
