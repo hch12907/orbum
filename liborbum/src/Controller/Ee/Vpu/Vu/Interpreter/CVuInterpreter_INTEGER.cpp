@@ -33,7 +33,7 @@ void CVuInterpreter::IADDI(VuUnit_Base* unit, const VuInstruction inst)
 
     // Imm5 is a five-bit signed integer, so convert it
     const shword a = static_cast<shword>(reg_source_1.read_uhword());
-    const shword b = extend_integer<shword, ubyte, 5>(reg_source_2);
+    const shword b = extend_integer_sign<shword, ubyte, 5>(reg_source_2);
     shword result = a + b;
 
     reg_dest.write_uhword(static_cast<uhword>(result));

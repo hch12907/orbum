@@ -109,7 +109,7 @@ void CVuInterpreter::IBEQ(VuUnit_Base* unit, const VuInstruction inst)
 
     if (reg_source_1.read_uhword() == reg_source_2.read_uhword())
     {
-        shword offset_by = extend_integer<shword, uhword, 11>(inst.imm11());
+        shword offset_by = extend_integer_sign<shword, uhword, 11>(inst.imm11());
         unit->bdelay.set_branch_itype(unit->pc, offset_by);
     }
 }
@@ -120,7 +120,7 @@ void CVuInterpreter::IBGEZ(VuUnit_Base* unit, const VuInstruction inst)
 
     if (reg_source_1.read_uhword() >= 0)
     {
-        shword offset_by = extend_integer<shword, uhword, 11>(inst.imm11());
+        shword offset_by = extend_integer_sign<shword, uhword, 11>(inst.imm11());
         unit->bdelay.set_branch_itype(unit->pc, offset_by);
     }
 }
@@ -131,7 +131,7 @@ void CVuInterpreter::IBGTZ(VuUnit_Base* unit, const VuInstruction inst)
 
     if (reg_source_1.read_uhword() > 0)
     {
-        shword offset_by = extend_integer<shword, uhword, 11>(inst.imm11());
+        shword offset_by = extend_integer_sign<shword, uhword, 11>(inst.imm11());
         unit->bdelay.set_branch_itype(unit->pc, offset_by);
     }
 }
@@ -142,7 +142,7 @@ void CVuInterpreter::IBLEZ(VuUnit_Base* unit, const VuInstruction inst)
 
     if (reg_source_1.read_uhword() <= 0)
     {
-        shword offset_by = extend_integer<shword, uhword, 11>(inst.imm11());
+        shword offset_by = extend_integer_sign<shword, uhword, 11>(inst.imm11());
         unit->bdelay.set_branch_itype(unit->pc, offset_by);
     }
 }
@@ -153,7 +153,7 @@ void CVuInterpreter::IBLTZ(VuUnit_Base* unit, const VuInstruction inst)
 
     if (reg_source_1.read_uhword() < 0)
     {
-        shword offset_by = extend_integer<shword, uhword, 11>(inst.imm11());
+        shword offset_by = extend_integer_sign<shword, uhword, 11>(inst.imm11());
         unit->bdelay.set_branch_itype(unit->pc, offset_by);
     }
 }
@@ -165,14 +165,14 @@ void CVuInterpreter::IBNE(VuUnit_Base* unit, const VuInstruction inst)
 
     if (reg_source_1.read_uhword() != reg_source_2.read_uhword())
     {
-        shword offset_by = extend_integer<shword, uhword, 11>(inst.imm11());
+        shword offset_by = extend_integer_sign<shword, uhword, 11>(inst.imm11());
         unit->bdelay.set_branch_itype(unit->pc, offset_by);
     }
 }
 
 void CVuInterpreter::B(VuUnit_Base* unit, const VuInstruction inst)
 {
-    shword offset_by = extend_integer<shword, uhword, 11>(inst.imm11());
+    shword offset_by = extend_integer_sign<shword, uhword, 11>(inst.imm11());
     unit->bdelay.set_branch_itype(unit->pc, offset_by);
 }
 
@@ -193,7 +193,7 @@ void CVuInterpreter::BAL(VuUnit_Base* unit, const VuInstruction inst)
         reg_dest.write_uhword((unit->pc.read_uword() + 2 * 8) / 8);
     }
 
-    shword offset_by = extend_integer<shword, uhword, 11>(inst.imm11());
+    shword offset_by = extend_integer_sign<shword, uhword, 11>(inst.imm11());
     unit->bdelay.set_branch_itype(unit->pc, offset_by);
 }
 

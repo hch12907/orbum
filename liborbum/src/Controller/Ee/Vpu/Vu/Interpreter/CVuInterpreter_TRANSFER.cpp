@@ -60,7 +60,7 @@ void CVuInterpreter::LQ(VuUnit_Base* unit, const VuInstruction inst)
     SizedHwordRegister& reg_source = unit->vi[inst.is()];
     SizedQwordRegister& reg_dest = unit->vf[inst.ft()];
 
-    const shword offset = extend_integer<uhword, shword, 11>(inst.imm11());
+    const shword offset = extend_integer_sign<uhword, shword, 11>(inst.imm11());
     const uword address = (offset + reg_source.read_uhword()) * NUMBER_BYTES_IN_QWORD;
     const uqword source = unit->bus.read_uqword(BusContext::Vu, address);
 
@@ -121,7 +121,7 @@ void CVuInterpreter::SQ(VuUnit_Base* unit, const VuInstruction inst)
     SizedQwordRegister& reg_source_1 = unit->vf[inst.fs()];
     SizedHwordRegister& reg_source_2 = unit->vi[inst.it()];
 
-    const shword offset = extend_integer<uhword, shword, 11>(inst.imm11());
+    const shword offset = extend_integer_sign<uhword, shword, 11>(inst.imm11());
     const uword address = (offset + reg_source_2.read_uhword()) * NUMBER_BYTES_IN_QWORD;
 
     for (auto field : VuVectorField::VECTOR_FIELDS)
@@ -177,7 +177,7 @@ void CVuInterpreter::ILW(VuUnit_Base* unit, const VuInstruction inst)
     SizedHwordRegister& reg_source = unit->vi[inst.is()];
     SizedHwordRegister& reg_dest = unit->vi[inst.it()];
 
-    const shword offset = extend_integer<uhword, shword, 11>(inst.imm11());
+    const shword offset = extend_integer_sign<uhword, shword, 11>(inst.imm11());
     const uword address = (offset + reg_source.read_uhword()) * NUMBER_BYTES_IN_QWORD;
 
     // Note: the operation is undefined when multiple fields are specified
@@ -196,7 +196,7 @@ void CVuInterpreter::ISW(VuUnit_Base* unit, const VuInstruction inst)
     SizedHwordRegister& reg_source_1 = unit->vi[inst.it()];
     SizedHwordRegister& reg_source_2 = unit->vi[inst.is()];
 
-    const shword offset = extend_integer<uhword, shword, 11>(inst.imm11());
+    const shword offset = extend_integer_sign<uhword, shword, 11>(inst.imm11());
     const uword address = (offset + reg_source_2.read_uhword()) * NUMBER_BYTES_IN_QWORD;
 
     for (auto field : VuVectorField::VECTOR_FIELDS)
