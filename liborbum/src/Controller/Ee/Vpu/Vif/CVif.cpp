@@ -81,15 +81,11 @@ int CVif::time_step(const int ticks_available)
                 unit->inst = std::make_unique<VifcodeInstruction>(data);
                 unit->stat.insert_field(VifUnitRegister_Stat::VPS, 0b10);
                 unit->subpackets_left = obtain_required_words(*unit->inst);
-
+                BOOST_LOG(Core::get_logger()) << "VIF: Fetched instruction " << unit->inst->get_info()->mnemonic;
                 continue;
             }
             else
             {
-                unit->subpackets_left--;
-
-                (this->*INSTRUCTION_TABLE[unit->inst->get_info()->impl_index])(unit, *unit->inst);
-
                 // If there are no packets left, set the VIF status to idle
                 if (!unit->subpackets_left)
                 {
@@ -104,6 +100,10 @@ int CVif::time_step(const int ticks_available)
 
                     continue;
                 }
+
+                unit->subpackets_left--;
+
+                (this->*INSTRUCTION_TABLE[unit->inst->get_info()->impl_index])(unit, *unit->inst);
             }
         }
 
@@ -121,10 +121,10 @@ int CVif::obtain_required_words(const VifcodeInstruction instruction) const
     switch (instruction.get_info()->cpi)
     {
     case SpecialVifcodePacketUsage::Num:
-        return 1 + instruction.num() * 2;
+        return 1 + (instruction.num() ? instruction.num() : 256) * 2;
 
     case SpecialVifcodePacketUsage::Immediate:
-        return 1 + instruction.imm() * 4;
+        return 1 + (instruction.imm() ? instruction.imm() : 65536) * 4;
 
     default:
         return instruction.get_info()->cpi;

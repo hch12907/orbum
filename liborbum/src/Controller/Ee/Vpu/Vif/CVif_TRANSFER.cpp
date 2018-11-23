@@ -46,7 +46,16 @@ void CVif::DIRECT(VifUnit_Base* unit, const VifcodeInstruction inst)
         return;
     }
 
-    // TODO: Implement this
+    // Do nothing in the first pass
+    if (unit->subpackets_left >= obtain_required_words(inst))
+    {
+        return;
+    }
+
+    RResources& r = core->get_resources();
+    unit->stat.insert_field(VifUnitRegister_Stat::VFS, 0b11);
+
+    r.fifo_gif_path2.write(reinterpret_cast<const ubyte*>(&unit->processing_data), NUMBER_BYTES_IN_WORD);
 }
 
 void CVif::DIRECTHL(VifUnit_Base* unit, const VifcodeInstruction inst)
@@ -58,5 +67,15 @@ void CVif::DIRECTHL(VifUnit_Base* unit, const VifcodeInstruction inst)
         return;
     }
 
-    // TODO: Implement this
+    // Do nothing in the first pass
+    if (unit->subpackets_left >= obtain_required_words(inst))
+    {
+        return;
+    }
+
+    RResources& r = core->get_resources();
+    unit->stat.insert_field(VifUnitRegister_Stat::VFS, 0b11);
+
+    // TODO: We are supposed to stall until the PATH3 IMAGE transfer is finished...
+    r.fifo_gif_path2.write(reinterpret_cast<const ubyte*>(&unit->processing_data), NUMBER_BYTES_IN_WORD);
 }

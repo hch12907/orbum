@@ -94,20 +94,20 @@ void CVif::STMASK(VifUnit_Base* unit, const VifcodeInstruction inst)
 
 void CVif::STROW(VifUnit_Base* unit, const VifcodeInstruction inst)
 {
-    if (unit->subpackets_left >= 4)
+    if (unit->subpackets_left >= obtain_required_words(inst))
         return;
 
     SizedWordRegister *const row_regs[4] = { &unit->r3, &unit->r2, &unit->r1, &unit->r0 };
 
-    row_regs[unit->subpackets_left]->write_uword(unit->processing_data);
+    row_regs[unit->subpackets_left - 1]->write_uword(unit->processing_data);
 }
 
 void CVif::STCOL(VifUnit_Base* unit, const VifcodeInstruction inst)
 {
-    if (unit->subpackets_left >= 4)
+    if (unit->subpackets_left >= obtain_required_words(inst))
         return;
 
     SizedWordRegister *const col_regs[4] = { &unit->c3, &unit->c2, &unit->c1, &unit->c0 };
 
-    col_regs[unit->subpackets_left]->write_uword(unit->processing_data);
+    col_regs[unit->subpackets_left - 1]->write_uword(unit->processing_data);
 }
