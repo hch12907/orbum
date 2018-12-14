@@ -12,7 +12,7 @@
 class VifUnit_Base
 {
 public:
-    VifUnit_Base(const int core_id);
+    VifUnit_Base(const int core_id, DmaFifoQueue<>* queue = nullptr);
 
     /// ID of the VIF unit.
     int core_id;

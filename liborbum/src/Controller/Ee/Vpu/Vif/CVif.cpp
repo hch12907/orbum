@@ -50,6 +50,21 @@ int CVif::time_step(const int ticks_available)
 
     for (auto& unit : r.ee.vpu.vif.units)
     {
+        // If STC is written, reset the following fields of VIF.STAT:
+        // VSS, VFS, VIS, INT, ER0, ER1
+        if (unit->fbrst.extract_field(VifUnitRegister_Fbrst::STC))
+        {
+            uword stat = unit->stat.read_uword();
+            stat = VifUnitRegister_Stat::VSS.insert_into(stat, 0u);
+            stat = VifUnitRegister_Stat::VFS.insert_into(stat, 0u);
+            stat = VifUnitRegister_Stat::VIS.insert_into(stat, 0u);
+            stat = VifUnitRegister_Stat::INT.insert_into(stat, 0u);
+            stat = VifUnitRegister_Stat::ER0.insert_into(stat, 0u);
+            stat = VifUnitRegister_Stat::ER1.insert_into(stat, 0u);
+
+            unit->stat.write_uword(stat);
+        }
+
         // Check if VIF is stalled, do not do anything (FBRST.STC needs to be written to before we continue).
         if (unit->stat.is_stalled())
             continue;
@@ -65,13 +80,34 @@ int CVif::time_step(const int ticks_available)
         if (!unit->dma_fifo_queue->has_read_available(NUMBER_BYTES_IN_QWORD))
             continue;
 
+        // Four VIF statuses: 0b00 Idle, 01 Waiting for data, 10 Decoding VIFcode, 11 Decompressing data
+        const ubyte status = unit->stat.extract_field(VifUnitRegister_Stat::VPS);
+
+        // Check for STP
+        if (!status && unit->fbrst.extract_field(VifUnitRegister_Fbrst::STP))
+        {
+            unit->stat.insert_field(VifUnitRegister_Stat::VSS, 1);
+            unit->fbrst.insert_field(VifUnitRegister_Fbrst::STP, 0);
+            continue;
+        }
+
+        // If RST is written, reset the VIF
+        if (!status && unit->fbrst.extract_field(VifUnitRegister_Fbrst::RST))
+        {
+            BOOST_LOG(Core::get_logger()) << "VIF: Resetting VIF" << unit->core_id;
+            unit->fbrst.insert_field(VifUnitRegister_Fbrst::RST, 0);
+            
+            // Reinitialize the VIF unit
+            unit->dma_fifo_queue->initialize();
+            *unit = VifUnit_Base(unit->core_id, unit->dma_fifo_queue);
+
+            continue;
+        }
+
         for (int i = unit->packet_progress; i < NUMBER_WORDS_IN_QWORD; i++, unit->packet_progress = i)
         {
             unit->dma_fifo_queue->read(reinterpret_cast<ubyte*>(&unit->processing_data), NUMBER_BYTES_IN_WORD);
 
-            // Four VIF statuses: 0b00 Idle, 01 Waiting for data, 10 Decoding VIFcode, 11 Decompressing data
-            const ubyte status = unit->stat.extract_field(VifUnitRegister_Stat::VPS);
-            
             const uword& data = unit->processing_data;
 
             // If the VIF is idling, treat the data as a VIFcode
@@ -92,8 +128,9 @@ int CVif::time_step(const int ticks_available)
                     unit->stat.insert_field(VifUnitRegister_Stat::VPS, 0b00);
 
                     // If the I bit is set, raise an interrupt
-                    if ((*unit->inst).i())
+                    if (unit->inst->i() && !unit->err.extract_field(VifUnitRegister_Err::MII))
                     {
+                        unit->stat.insert_field(VifUnitRegister_Stat::INT, 1);
                         auto _lock = r.ee.intc.stat.scope_lock();
                         r.ee.intc.stat.insert_field(EeIntcRegister_Stat::VIF_KEYS[unit->core_id], 1);
                     }
@@ -159,7 +196,7 @@ int CVif::obtain_required_words(const VifUnit_Base& unit, const VifcodeInstructi
             return 1 + data_words;
         }
     }
-       
+
     default:
         return inst.get_info()->cpi;
     }
@@ -167,6 +204,11 @@ int CVif::obtain_required_words(const VifUnit_Base& unit, const VifcodeInstructi
 
 void CVif::INSTRUCTION_UNSUPPORTED(VifUnit_Base* unit, const VifcodeInstruction inst)
 {
+    if (unit->err.extract_field(VifUnitRegister_Err::ME1))
+    {
+        return NOP(unit, inst);
+    }
+
     throw std::runtime_error("VIFcode CMD field was invalid! Please fix.");
 }
 
