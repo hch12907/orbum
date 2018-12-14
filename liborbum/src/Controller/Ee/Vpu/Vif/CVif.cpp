@@ -129,6 +129,7 @@ int CVif::obtain_required_words(const VifUnit_Base& unit, const VifcodeInstructi
         return 1 + (((inst.imm() - 1) & 0xFFFF) + 1) * 4;
 
     case SpecialVifcodePacketUsage::Unpack:
+    {
         const int cl = unit.cycle.extract_field(VifUnitRegister_Cycle::CL);
         const int wl = unit.cycle.extract_field(VifUnitRegister_Cycle::WL);
 
@@ -157,7 +158,8 @@ int CVif::obtain_required_words(const VifUnit_Base& unit, const VifcodeInstructi
 
             return 1 + data_words;
         }
-        
+    }
+       
     default:
         return inst.get_info()->cpi;
     }
