@@ -106,5 +106,5 @@ public:
 private:
     /// Obtains the amount of words (a packet holds 4 subpackets, each subpacket is a
     /// word long) required for the instruction. 
-    int obtain_required_words(const VifcodeInstruction inst) const;
+    int obtain_required_words(const VifUnit_Base& unit, const VifcodeInstruction inst) const;
 };

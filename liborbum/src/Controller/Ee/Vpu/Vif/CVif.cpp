@@ -80,7 +80,7 @@ int CVif::time_step(const int ticks_available)
                 unit->code.write_uword(data);
                 unit->inst = std::make_unique<VifcodeInstruction>(data);
                 unit->stat.insert_field(VifUnitRegister_Stat::VPS, 0b10);
-                unit->subpackets_left = obtain_required_words(*unit->inst);
+                unit->subpackets_left = obtain_required_words(*unit, *unit->inst);
                 BOOST_LOG(Core::get_logger()) << "VIF: Fetched instruction " << unit->inst->get_info()->mnemonic;
                 continue;
             }
@@ -116,18 +116,50 @@ int CVif::time_step(const int ticks_available)
     return 1;
 }
 
-int CVif::obtain_required_words(const VifcodeInstruction instruction) const
+int CVif::obtain_required_words(const VifUnit_Base& unit, const VifcodeInstruction inst) const
 {
-    switch (instruction.get_info()->cpi)
+    switch (inst.get_info()->cpi)
     {
     case SpecialVifcodePacketUsage::Num:
-        return 1 + (instruction.num() ? instruction.num() : 256) * 2;
+        // branchless version of `1 + inst.num() ? inst.num() : 256` (0 = 2^8)
+        return 1 + (((inst.num() - 1) & 0xFF) + 1) * 2;
 
     case SpecialVifcodePacketUsage::Immediate:
-        return 1 + (instruction.imm() ? instruction.imm() : 65536) * 4;
+        // branchless version of `1 + inst.imm() ? inst.imm() : 65536` (0 = 2^16)
+        return 1 + (((inst.imm() - 1) & 0xFFFF) + 1) * 4;
 
+    case SpecialVifcodePacketUsage::Unpack:
+        const int cl = unit.cycle.extract_field(VifUnitRegister_Cycle::CL);
+        const int wl = unit.cycle.extract_field(VifUnitRegister_Cycle::WL);
+
+        // The length of each element, in bits
+        const int element_length = 32 >> inst.vl();
+        // The number of elements in each data
+        const int num_of_element = inst.vn() + 1;
+
+        if (wl > cl)
+        {
+            // The number of data
+            const int data_num = cl * (inst.num() / wl) + std::min(inst.num() % wl, cl);
+            // The length of the data in bits
+            const int data_length = element_length * num_of_element * data_num;
+            // The length of the data in words (quotient is rounded up if there are remainders, hence the +31)
+            const int data_words = (data_length + 31) >> 5;
+
+            return 1 + data_words;
+        }
+        else
+        {
+            // The length of the data in bits
+            const int data_length = element_length * num_of_element * inst.num();
+            // The length of the data in words (quotient is rounded up if there are remainders, hence the +31)
+            const int data_words = (data_length + 31) >> 5;
+
+            return 1 + data_words;
+        }
+        
     default:
-        return instruction.get_info()->cpi;
+        return inst.get_info()->cpi;
     }
 }
 

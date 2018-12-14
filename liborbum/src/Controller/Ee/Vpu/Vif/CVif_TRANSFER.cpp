@@ -19,14 +19,14 @@ void CVif::MPG(VifUnit_Base* unit, const VifcodeInstruction inst)
     }
 
     // First pass - decoding VIF code & obtaining the num
-    if (unit->subpackets_left == obtain_required_words(inst))
+    if (unit->subpackets_left == obtain_required_words(*unit, inst))
     {
         unit->num.write_uword(inst.num());
         unit->stat.insert_field(VifUnitRegister_Stat::VFS, 0b11);
     }
 
     // Other passes - transfer data to VU mem
-    if (unit->subpackets_left < obtain_required_words(inst))
+    if (unit->subpackets_left < obtain_required_words(*unit, inst))
     {
         const uword starting_addr = inst.imm() * 8;
         const uword offset = (inst.num() - unit->num.read_uword()) * 4 + unit->packet_progress;
@@ -47,7 +47,7 @@ void CVif::DIRECT(VifUnit_Base* unit, const VifcodeInstruction inst)
     }
 
     // Do nothing in the first pass
-    if (unit->subpackets_left >= obtain_required_words(inst))
+    if (unit->subpackets_left >= obtain_required_words(*unit, inst))
     {
         return;
     }
@@ -68,7 +68,7 @@ void CVif::DIRECTHL(VifUnit_Base* unit, const VifcodeInstruction inst)
     }
 
     // Do nothing in the first pass
-    if (unit->subpackets_left >= obtain_required_words(inst))
+    if (unit->subpackets_left >= obtain_required_words(*unit, inst))
     {
         return;
     }
