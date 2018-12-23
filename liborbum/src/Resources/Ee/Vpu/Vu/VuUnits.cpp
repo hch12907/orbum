@@ -15,6 +15,8 @@ VuUnit_Base::VuUnit_Base(const int core_id) :
        SizedHwordRegister(), SizedHwordRegister(), SizedHwordRegister(), SizedHwordRegister(),
        SizedHwordRegister(), SizedHwordRegister(), SizedHwordRegister(), SizedHwordRegister(),
        SizedHwordRegister(), SizedHwordRegister(), SizedHwordRegister(), SizedHwordRegister()},
+    micro_mem(nullptr),
+    vu_mem(nullptr),
     bus(8), // TODO: fine tune.
     operation_state(VuOperationState::Ready)
 {
@@ -27,6 +29,8 @@ VuUnit_Vu0::VuUnit_Vu0(const int core_id) :
     ccr{nullptr},
     cop0(nullptr)
 {
+    micro_mem = &memory_micro;
+    vu_mem = &memory_mem;
 }
 
 bool VuUnit_Vu0::is_usable()
@@ -40,4 +44,6 @@ VuUnit_Vu1::VuUnit_Vu1(const int core_id) :
     memory_micro(Constants::SIZE_16KB),
     memory_mem(Constants::SIZE_16KB)
 {
+    micro_mem = &memory_micro;
+    vu_mem = &memory_mem;
 }

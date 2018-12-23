@@ -30,7 +30,7 @@ int CVuInterpreter::time_step(const int ticks_available)
 
         // PC & Instructions stuff...
         const uword pc = unit->pc.read_uword() & 0x0FFF;
-        const udword raw_inst = r.ee.bus.read_uword(BusContext::Vu, 0x11000000 | (0x8000 * unit->core_id + pc));
+        const udword raw_inst = unit->micro_mem->read_uword(pc);
 
         const uword upper_raw_inst = (raw_inst >> 32) & 0xFFFFFFFF;
         const VuInstruction upper_inst = VuInstruction(upper_raw_inst);

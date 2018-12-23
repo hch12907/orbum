@@ -31,7 +31,9 @@ struct VuInstruction : public MipsInstruction
     static constexpr Bitfield W = Bitfield(21, 1);
 
     VuInstruction(const uword value) :
-        MipsInstruction(value)
+        MipsInstruction(value),
+        lower_info(nullptr),
+        upper_info(nullptr)
     {
     }
 

@@ -30,6 +30,10 @@ public:
     /// ID of the VU.
     int core_id;
 
+    /// Reference to the VU memory, actual storage is located in the derived classes
+    ArrayByteMemory* micro_mem;
+    ArrayByteMemory* vu_mem;
+
     /// VU floating point registers (VF) (128-bit) and integer registers (VI) (16-bit).
     /// The first VI register is a constant 0 register.
     /// See VU Users Manual page 18.
