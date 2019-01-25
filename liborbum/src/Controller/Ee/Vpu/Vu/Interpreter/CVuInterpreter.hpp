@@ -11,7 +11,7 @@ class Core;
 class CVuInterpreter : public CVu
 {
 public:
-    CVuInterpreter(Core* core);
+    CVuInterpreter(Core* core, int id);
 
     /// Steps through the VU core state, executing one macro and one micro instruction.
     int time_step(const int ticks_available) override;

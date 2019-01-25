@@ -23,10 +23,10 @@ public:
     /// The data being processed by the VIF.
     uword processing_data;
 
-    /// A packet has 4 subpackets. Which one are we processing now?
+    /// A packet has 4 subpackets (words) - this is nth subpacket we are processing
     uword packet_progress;
 
-    /// The amount of packets that are needed for processing.
+    /// The amount of packets left for processing.
     uword subpackets_left;
 
     /// DMA FIFO queue.

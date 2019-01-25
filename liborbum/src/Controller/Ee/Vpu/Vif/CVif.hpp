@@ -15,7 +15,7 @@ class Core;
 class CVif : public CController
 {
 public:
-    CVif(Core* core);
+    CVif(Core* core, int id);
 
     void handle_event(const ControllerEvent& event) override;
 
@@ -107,4 +107,11 @@ private:
     /// Obtains the amount of words (a packet holds 4 subpackets, each subpacket is a
     /// word long) required for the instruction. 
     int obtain_required_words(const VifUnit_Base& unit, const VifcodeInstruction inst) const;
+
+    /// Stores the ID of the VIF.
+    int core_id;
+    
+    /// A helper function for writing data to the VU mem.
+    template<typename T>
+    void write_vu_mem(VifUnit_Base* unit, const uword offset, const T data);
 };

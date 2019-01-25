@@ -4,8 +4,9 @@
 
 #include "Resources/RResources.hpp"
 
-CVu::CVu(Core* core) :
-    CController(core)
+CVu::CVu(Core* core, int id) :
+    CController(core),
+    core_id(id)
 {
 }
 

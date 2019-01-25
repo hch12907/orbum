@@ -86,6 +86,8 @@ set(COMMON_SRC_FILES
     "${CMAKE_SOURCE_DIR}/liborbum/src/Controller/Ee/Vpu/Vif/CVif_SET.cpp"
     "${CMAKE_SOURCE_DIR}/liborbum/src/Controller/Ee/Vpu/Vif/CVif_TRANSFER.cpp"
     "${CMAKE_SOURCE_DIR}/liborbum/src/Controller/Ee/Vpu/Vif/CVif_UNPACK.cpp"
+    "${CMAKE_SOURCE_DIR}/liborbum/src/Controller/Ee/Vpu/CVpu.cpp"
+    "${CMAKE_SOURCE_DIR}/liborbum/src/Controller/Ee/Vpu/CVpu.hpp"
     "${CMAKE_SOURCE_DIR}/liborbum/src/Controller/Ee/Vpu/Vu/CVu.cpp"
     "${CMAKE_SOURCE_DIR}/liborbum/src/Controller/Ee/Vpu/Vu/CVu.hpp"
     "${CMAKE_SOURCE_DIR}/liborbum/src/Controller/Ee/Vpu/Vu/Interpreter/CVuInterpreter.cpp"

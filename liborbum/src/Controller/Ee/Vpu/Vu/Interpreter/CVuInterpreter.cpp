@@ -7,8 +7,8 @@
 #include "Core.hpp"
 #include "Resources/RResources.hpp"
 
-CVuInterpreter::CVuInterpreter(Core* core) :
-    CVu(core)
+CVuInterpreter::CVuInterpreter(Core* core, int id) :
+    CVu(core, id)
 {
 }
 
@@ -20,149 +20,148 @@ int CVuInterpreter::time_step(const int ticks_available)
 
     RResources& r = core->get_resources();
 
-    for (auto* unit : r.ee.vpu.vu.units)
+    VuUnit_Base* const unit = r.ee.vpu.vu.units[core_id];
+
+    // Move on if the unit is not running and the delay slot is empty
+    if (unit->operation_state != VuOperationState::Run && !unit->bdelay.is_branch_pending())
     {
-        // Move on if the unit is not running and the delay slot is empty
-        if (unit->operation_state != VuOperationState::Run && !unit->bdelay.is_branch_pending())
+        return 1;
+    }
+
+    // PC & Instructions stuff...
+    const uword pc = unit->pc.read_uword() & 0x0FFF;
+    const udword raw_inst = unit->micro_mem->read_uword(pc);
+
+    const uword upper_raw_inst = (raw_inst >> 32) & 0xFFFFFFFF;
+    const VuInstruction upper_inst = VuInstruction(upper_raw_inst);
+    const MipsInstructionInfo upper_info = upper_inst.get_upper_info();
+    const VuInstructionDecoder upper_decoder = VuInstructionDecoder(upper_inst, upper_info);
+
+    const uword lower_raw_inst = raw_inst & 0xFFFFFFFF;
+    const VuInstruction lower_inst = VuInstruction(lower_raw_inst);
+    const MipsInstructionInfo lower_info = lower_inst.get_lower_info();
+    const VuInstructionDecoder lower_decoder = VuInstructionDecoder(lower_inst, lower_info);
+
+    // Flush the pipelines
+    unit->efu.consume_cycle(1);
+    unit->fdiv.consume_cycle(1);
+    unit->ialu.consume_cycle(1);
+    unit->lsu.consume_cycle(1);
+
+    for (FmacPipeline& fmac : unit->fmac)
+    {
+        fmac.consume_cycle(1);
+    }
+
+    // If the units have finished execution, replace the original regs with new ones
+    if (!unit->efu.is_running())
+        unit->p = unit->efu.new_p;
+    if (!unit->fdiv.is_running())
+        unit->q = unit->fdiv.new_q;
+
+    bool data_hazard_occured = check_data_hazard(unit, upper_decoder, lower_decoder);
+
+    // If I (bit 63) is set, execute UpperInst and LOI (using LowerInst as an immediate)
+    if ((raw_inst >> 63) & 1)
+    {
+        execute_upper_instruction(unit, upper_decoder, data_hazard_occured);
+        this->LOI(unit, lower_inst);
+
+        // Advance PC and onto the next cycle
+        unit->bdelay.advance_pc(unit->pc);
+        return 1;
+    }
+
+    // If E (bit 62) is set, execute current and next instruction, and
+    // terminate the current micro subroutine
+    // Here we setup a delay slot for the next instruction
+    if ((raw_inst >> 62) & 1)
+    {
+        if (unit->bdelay.is_branch_pending())
         {
-            continue;
+            BOOST_LOG(Core::get_logger()) << "Found E-bit in branch delay slot";
         }
 
-        // PC & Instructions stuff...
-        const uword pc = unit->pc.read_uword() & 0x0FFF;
-        const udword raw_inst = unit->micro_mem->read_uword(pc);
+        // Don't actually branch
+        unit->bdelay.set_branch_itype(unit->pc, 0);
 
-        const uword upper_raw_inst = (raw_inst >> 32) & 0xFFFFFFFF;
-        const VuInstruction upper_inst = VuInstruction(upper_raw_inst);
-        const MipsInstructionInfo upper_info = upper_inst.get_upper_info();
-        const VuInstructionDecoder upper_decoder = VuInstructionDecoder(upper_inst, upper_info);
+        // Change the state of the VU
+        unit->operation_state = VuOperationState::Ready;
+    }
 
-        const uword lower_raw_inst = raw_inst & 0xFFFFFFFF;
-        const VuInstruction lower_inst = VuInstruction(lower_raw_inst);
-        const MipsInstructionInfo lower_info = lower_inst.get_lower_info();
-        const VuInstructionDecoder lower_decoder = VuInstructionDecoder(lower_inst, lower_info);
-
-        // Flush the pipelines
-        unit->efu.consume_cycle(1);
-        unit->fdiv.consume_cycle(1);
-        unit->ialu.consume_cycle(1);
-        unit->lsu.consume_cycle(1);
-
-        for (FmacPipeline& fmac : unit->fmac)
+    // If M (bit 61) is set, then execute QMTC2 or CTC2 without interlocking
+    // (VU0 only)
+    if (((raw_inst >> 61) & 1) && unit->core_id == 0)
+    {
+        VuUnit_Vu0& vu = r.ee.vpu.vu.unit_0;
+        if (vu.transferred_reg.has_value())
         {
-            fmac.consume_cycle(1);
+            *vu.ccr[vu.transferred_reg_location] = vu.transferred_reg.value();
+            vu.transferred_reg = std::nullopt;
         }
+    }
 
-        // If the units have finished execution, replace the original regs with new ones
-        if (!unit->efu.is_running())
-            unit->p = unit->efu.new_p;
-        if (!unit->fdiv.is_running())
-            unit->q = unit->fdiv.new_q;
-
-        bool data_hazard_occured = check_data_hazard(unit, upper_decoder, lower_decoder);
-
-        // If I (bit 63) is set, execute UpperInst and LOI (using LowerInst as an immediate)
-        if ((raw_inst >> 63) & 1)
+    // If D (bit 60) and DE (in FBRST) is set, terminate the micro subroutine and interrupt
+    if ((raw_inst >> 60) & 1)
+    {
+        if (r.ee.vpu.vu.fbrst.de(unit->core_id))
         {
-            execute_upper_instruction(unit, upper_decoder, data_hazard_occured);
-            this->LOI(unit, lower_inst);
-
-            // Advance PC and onto the next unit
-            unit->bdelay.advance_pc(unit->pc);
-            continue;
+            auto _lock = r.ee.intc.stat.scope_lock();
+            r.ee.intc.stat.insert_field(EeIntcRegister_Stat::VU_KEYS[unit->core_id], 1);
+            unit->operation_state = VuOperationState::Stop;
         }
+    }
 
-        // If E (bit 62) is set, execute current and next instruction, and
-        // terminate the current micro subroutine
-        // Here we setup a delay slot for the next instruction
-        if ((raw_inst >> 62) & 1)
+    // If T (bit 59) and TE (in FBRST) is set, terminate the micro subroutine and interrupt
+    if ((raw_inst >> 59) & 1)
+    {
+        if (r.ee.vpu.vu.fbrst.te(unit->core_id))
         {
-            if (unit->bdelay.is_branch_pending())
+            auto _lock = r.ee.intc.stat.scope_lock();
+            r.ee.intc.stat.insert_field(EeIntcRegister_Stat::VU_KEYS[unit->core_id], 1);
+            unit->operation_state = VuOperationState::Stop;
+        }
+    }
+
+    // Register writing priority, if both upper and lower inst write to the same
+    // register, the priority is: COP2 Transfer > Upper Inst > Lower Inst
+    try
+    {
+        // Try obtaining the destination (will throw if the instruction writes to non-VF/VI regs)
+        const uword upper_dest = *upper_decoder.try_get_dest();
+        const uword lower_dest = *lower_decoder.try_get_dest();
+
+        // Check if the lower instruction write to VI or VF
+        // If it writes to VF, check if it writes to the same reg
+        if (!lower_decoder.is_integer_instruction())
+        {
+            if (upper_dest == lower_dest)
             {
-                BOOST_LOG(Core::get_logger()) << "Found E-bit in branch delay slot";
-            }
-
-            // Don't actually branch
-            unit->bdelay.set_branch_itype(unit->pc, 0);
-
-            // Change the state of the VU
-            unit->operation_state = VuOperationState::Ready;
-        }
-
-        // If M (bit 61) is set, then execute QMTC2 or CTC2 without interlocking
-        // (VU0 only)
-        if (((raw_inst >> 61) & 1) && unit->core_id == 0)
-        {
-            VuUnit_Vu0& vu = r.ee.vpu.vu.unit_0;
-            if (vu.transferred_reg.has_value())
-            {
-                *vu.ccr[vu.transferred_reg_location] = vu.transferred_reg.value();
-                vu.transferred_reg = std::nullopt;
-            }
-        }
-
-        // If D (bit 60) and DE (in FBRST) is set, terminate the micro subroutine and interrupt
-        if ((raw_inst >> 60) & 1)
-        {
-            if (r.ee.vpu.vu.fbrst.de(unit->core_id))
-            {
-                auto _lock = r.ee.intc.stat.scope_lock();
-                r.ee.intc.stat.insert_field(EeIntcRegister_Stat::VU_KEYS[unit->core_id], 1);
-                unit->operation_state = VuOperationState::Stop;
-            }
-        }
-
-        // If T (bit 59) and TE (in FBRST) is set, terminate the micro subroutine and interrupt
-        if ((raw_inst >> 59) & 1)
-        {
-            if (r.ee.vpu.vu.fbrst.te(unit->core_id))
-            {
-                auto _lock = r.ee.intc.stat.scope_lock();
-                r.ee.intc.stat.insert_field(EeIntcRegister_Stat::VU_KEYS[unit->core_id], 1);
-                unit->operation_state = VuOperationState::Stop;
-            }
-        }
-
-        // Register writing priority, if both upper and lower inst write to the same
-        // register, the priority is: COP2 Transfer > Upper Inst > Lower Inst
-        try
-        {
-            // Try obtaining the destination (will throw if the instruction writes to non-VF/VI regs)
-            const uword upper_dest = *upper_decoder.try_get_dest();
-            const uword lower_dest = *lower_decoder.try_get_dest();
-
-            // Check if the lower instruction write to VI or VF
-            // If it writes to VF, check if it writes to the same reg
-            if (!lower_decoder.is_integer_instruction())
-            {
-                if (upper_dest == lower_dest)
-                {
-                    SizedQwordRegister original_vf = unit->vf[upper_dest];
-                    execute_lower_instruction(unit, lower_decoder, data_hazard_occured);
-
-                    // The result produced by lower instruction is discarded
-                    unit->vf[upper_dest] = original_vf;
-                    execute_upper_instruction(unit, upper_decoder, data_hazard_occured);
-                }
-            }
-            else
-            {
-                // Otherwise just run it as usual
-                execute_upper_instruction(unit, upper_decoder, data_hazard_occured);
+                SizedQwordRegister original_vf = unit->vf[upper_dest];
                 execute_lower_instruction(unit, lower_decoder, data_hazard_occured);
+
+                // The result produced by lower instruction is discarded
+                unit->vf[upper_dest] = original_vf;
+                execute_upper_instruction(unit, upper_decoder, data_hazard_occured);
             }
         }
-        catch (std::exception)
+        else
         {
-            // If one of them write to special regs (P, Q, etc), execute like usual
+            // Otherwise just run it as usual
             execute_upper_instruction(unit, upper_decoder, data_hazard_occured);
             execute_lower_instruction(unit, lower_decoder, data_hazard_occured);
         }
-
-        // Advance the PC
-        if (!check_data_hazard(unit, upper_decoder, lower_decoder))
-            unit->bdelay.advance_pc(unit->pc);
     }
+    catch (std::exception)
+    {
+        // If one of them write to special regs (P, Q, etc), execute like usual
+        execute_upper_instruction(unit, upper_decoder, data_hazard_occured);
+        execute_lower_instruction(unit, lower_decoder, data_hazard_occured);
+    }
+
+    // Advance the PC
+    if (!check_data_hazard(unit, upper_decoder, lower_decoder))
+        unit->bdelay.advance_pc(unit->pc);
 
     // TODO: Correct CPI
     return 1;

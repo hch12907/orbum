@@ -9,12 +9,16 @@ class Core;
 class CVu : public CController
 {
 public:
-    CVu(Core* core);
+    CVu(Core* core, int id);
 
     void handle_event(const ControllerEvent& event) override;
 
     /// Steps through the VU core state, executing one macro and one micro instruction.
     virtual int time_step(const int ticks_available) = 0;
+
+protected:
+    /// Stores the ID of the VU
+    int core_id;
 
 private:
     /// Converts a time duration into the number of ticks that would have occurred.

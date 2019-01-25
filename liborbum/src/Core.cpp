@@ -24,7 +24,7 @@
 #include "Controller/Ee/Intc/CEeIntc.hpp"
 #include "Controller/Ee/Ipu/CIpu.hpp"
 #include "Controller/Ee/Timers/CEeTimers.hpp"
-#include "Controller/Ee/Vpu/Vif/CVif.hpp"
+#include "Controller/Ee/Vpu/CVpu.hpp"
 #include "Controller/Ee/Vpu/Vu/Interpreter/CVuInterpreter.hpp"
 #include "Controller/Gs/Core/CGsCore.hpp"
 #include "Controller/Gs/Crtc/CCrtc.hpp"
@@ -50,8 +50,8 @@ CoreOptions CoreOptions::make_default()
         "",
         "",
         "",
-        10,
-        4, //std::thread::hardware_concurrency() - 1,
+        1,
+        8, //std::thread::hardware_concurrency() - 1,
 
         1.0,
         1.0,
@@ -132,8 +132,8 @@ Core::Core(const CoreOptions& options) :
     controllers[ControllerType::Type::EeIntc] = std::make_unique<CEeIntc>(this);
     controllers[ControllerType::Type::Gif] = std::make_unique<CGif>(this);
     controllers[ControllerType::Type::Ipu] = std::make_unique<CIpu>(this);
-    controllers[ControllerType::Type::Vif] = std::make_unique<CVif>(this);
-    controllers[ControllerType::Type::Vu] = std::make_unique<CVuInterpreter>(this);
+    controllers[ControllerType::Type::Vif] = std::make_unique<CVpu<CVuInterpreter>>(this, 0);
+    controllers[ControllerType::Type::Vu] = std::make_unique<CVpu<CVuInterpreter>>(this, 1);
     controllers[ControllerType::Type::IopCore] = std::make_unique<CIopCoreInterpreter>(this);
     controllers[ControllerType::Type::IopDmac] = std::make_unique<CIopDmac>(this);
     controllers[ControllerType::Type::IopTimers] = std::make_unique<CIopTimers>(this);

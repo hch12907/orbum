@@ -8,7 +8,7 @@
 
 CEeCoreInterpreter::CEeCoreInterpreter(Core* core) :
     CEeCore(core),
-    c_vu_interpreter(core)
+    c_vu_interpreter(core, 0)
 {
 }
 
